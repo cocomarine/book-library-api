@@ -1,0 +1,24 @@
+{
+  "name": "book-library-api",
+  "version": "1.0.0",
+  "description": "A book library API created as part of the Manchester Codes Software Engineer Fasttrack course. Built using an Express.js app connected to a PostgreSQL database via Sequelize.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cocomarine/book-library-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cocomarine/book-library-api/issues"
+  },
+  "homepage": "https://github.com/cocomarine/book-library-api#readme",
+  "dependencies": {
+    "express": "^4.18.2",
+    "pg": "^8.8.0"
+  }
+}
