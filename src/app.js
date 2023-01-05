@@ -9,5 +9,6 @@ app.use(express.json());
 app.post('/readers', readerController.createReader);
 app.get('/readers', readerController.getAllReaders);
 app.get('/readers/:id', readerController.getReaderById);
+app.patch('/readers/:id', readerController.updateReaderById);
 
 module.exports = app;

@@ -76,14 +76,47 @@ describe('/readers', () => {
                 expect(response.body.email).to.equal(reader.email);
             });
 
-            it("returns a 404 if the reader doesnt exist", async () => {
+            it("returns a 404 if the reader does not exist", async () => {
                 const response = await request(app).get('/readers/12345');
                 
                 console.log(response.body.error)
                 expect(response.status).to.equal(404);
-                expect(response.body.error).to.equal('Reader does not exist');
+                expect(response.body.error).to.equal('reader does not exist');
             });
         });
 
+        describe('PATCH /readers/:id', () => {
+            it('updates readers email by id', async () => {
+                const reader = readers[0];
+                const response = await request(app)
+                    .patch(`/readers/${reader.id}`)
+                    .send({ email: 'miss_e_bennet@gmail.com' });
+                const updateReaderRecord = await Reader.findByPk(reader.id, {
+                    raw: true,
+                });
+
+                expect(response.status).to.equal(200);
+                expect(updateReaderRecord.email).to.equal('miss_e_bennet@gmail.com')
+            });
+
+            it('returns a 404 if the reader does not exist', async () => {
+                const response = await request(app)
+                    .patch('/readers/12345')
+                    .send({ email: 'some_other_email@gmail.com' });
+                
+                expect(response.status).to.equal(404);
+                expect(response.body.error).to.equal('reader does not exist');
+            });
+        });
+
+        describe('DELETE /readers/:id', () => {
+            xit('deletes reader record by id', async () => {
+
+            });
+
+            xit('returns a 404 if the reader does not exist', async () => {
+
+            });
+        })
     })
 });
