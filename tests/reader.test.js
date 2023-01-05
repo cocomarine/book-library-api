@@ -19,7 +19,7 @@ describe('/readers', () => {
                         name: 'Elizabeth Bennet',
                         email: 'future_ms_darcy@gmail.com',
                         password: 'abcdefghi'
-                });
+                    });
                 
                 const newReaderRecord = await Reader.findByPk(response.body.id, { raw: true });
 
