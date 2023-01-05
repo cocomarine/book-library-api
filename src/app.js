@@ -7,5 +7,7 @@ const app = express();
 app.use(express.json());
 
 app.post('/readers', readerController.createReader);
+app.get('/readers', readerController.getAllReaders);
+app.get('/readers/:id', readerController.getReaderById);
 
 module.exports = app;
