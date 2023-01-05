@@ -79,7 +79,6 @@ describe('/readers', () => {
             it("returns a 404 if the reader does not exist", async () => {
                 const response = await request(app).get('/readers/12345');
                 
-                console.log(response.body.error)
                 expect(response.status).to.equal(404);
                 expect(response.body.error).to.equal('reader does not exist');
             });
@@ -103,20 +102,27 @@ describe('/readers', () => {
                 const response = await request(app)
                     .patch('/readers/12345')
                     .send({ email: 'some_other_email@gmail.com' });
-                
+
                 expect(response.status).to.equal(404);
                 expect(response.body.error).to.equal('reader does not exist');
             });
         });
 
         describe('DELETE /readers/:id', () => {
-            xit('deletes reader record by id', async () => {
+            it('deletes reader record by id', async () => {
+                const reader = readers[0];
+                const response = await request(app).delete(`/readers/${reader.id}`);
+                const deletedReader = await Reader.findByPk(reader.id, { raw: true });
 
+                expect(response.status).to.equal(204);
+                expect(deletedReader).to.equal(null);
             });
-
-            xit('returns a 404 if the reader does not exist', async () => {
-
+      
+            it('returns a 404 if the reader does not exist', async () => {
+                const response = await request(app).delete('/readers/12345');
+                expect(response.status).to.equal(404);
+                expect(response.body.error).to.equal('reader does not exist');
             });
-        })
-    })
+        });
+    });
 });

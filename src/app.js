@@ -10,5 +10,6 @@ app.post('/readers', readerController.createReader);
 app.get('/readers', readerController.getAllReaders);
 app.get('/readers/:id', readerController.getReaderById);
 app.patch('/readers/:id', readerController.updateReaderById);
+app.delete('/readers/:id', readerController.deleteReaderById);
 
 module.exports = app;
