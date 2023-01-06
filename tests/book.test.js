@@ -78,5 +78,25 @@ describe('/books', () => {
             });
         });
 
-    })
+        describe('GET /books/:id', () => {
+            it('gets books record by id', async () => {
+                const book = books[0];
+                const response = await request(app).get(`/books/${book.id}`);
+
+                expect(response.status).to.equal(200);
+                expect(response.body.title).to.equal(book.title);
+                expect(response.body.author).to.equal(book.author);
+                expect(response.body.genre).to.equal(book.genre);
+                expect(response.body.ISBN).to.equal(book.ISBN);
+            });
+
+            it('returns a 404 if the book does not exist', async () => {
+                const response = await request(app).get('/books/12345');
+
+                expect(response.status).to.equal(404);
+                expect(response.body.error).to.equal('book does not exist');
+            });
+        });
+
+    });
 });
