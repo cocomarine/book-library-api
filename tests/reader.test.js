@@ -8,7 +8,7 @@ describe('/readers', () => {
 
     beforeEach(async () => {
         await Reader.destroy({ where: {} });
-    })
+    });
 
     describe('with no records in the database', () => {
         describe('POST /readers', () => {
@@ -83,7 +83,7 @@ describe('/readers', () => {
                 expect(response.body.password).to.equal(reader.password);
             });
 
-            it("returns a 404 if the reader does not exist", async () => {
+            it('returns a 404 if the reader does not exist', async () => {
                 const response = await request(app).get('/readers/12345');
                 
                 expect(response.status).to.equal(404);
