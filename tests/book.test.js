@@ -119,6 +119,5 @@ describe('/books', () => {
                 expect(response.body.error).to.equal('book does not exist');
             });
         });
-
     });
 });
