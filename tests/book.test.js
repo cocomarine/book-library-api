@@ -98,5 +98,27 @@ describe('/books', () => {
             });
         });
 
+        describe('PATCH /books/:id', () => {
+            it('updates books genre by id', async () => {
+                const book = books[0];
+                const response = await request(app)
+                    .patch(`/books/${book.id}`)
+                    .send({ genre: 'Contemporary Fantasy'})
+                const updateBookRecord = await Book.findByPk(book.id, { raw: true })
+           
+                expect(response.status).to.equal(200);
+                expect(updateBookRecord.genre).to.equal('Contemporary Fantasy');
+            });
+
+            it('returns a 404 if the book does not exist', async () => {
+                const response = await request(app)
+                    .patch('/books/12345')
+                    .send({ genre: 'Some other genre'});
+
+                expect(response.status).to.equal(404);
+                expect(response.body.error).to.equal('book does not exist');
+            });
+        });
+
     });
 });
