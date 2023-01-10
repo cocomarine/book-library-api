@@ -1,26 +1,9 @@
 const { Reader } = require('../models');
-const { createEntry } = require('./helpers');
+const { createEntry, getAllEntry, getEntryById } = require('./helpers');
 
 exports.createReader = (req, res) => createEntry(res, 'reader', req.body);
-
-exports.getAllReaders = async (_, res) => {
-    const readers = await Reader.findAll();
-    res.status(200).json(readers);
-};
-
-exports.getReaderById = async (req, res) => {
-    try {
-        const readerId = req.params.id;
-        const reader = await Reader.findByPk(readerId);
-
-        if (!reader) {
-          res.status(404).json({ error: 'reader does not exist' });
-        }
-        res.status(200).json(reader);
-    } catch (err) {
-        res.status(500).json(err.message);
-    }
-};
+exports.getAllReaders = (_, res) => getAllEntry(res, 'reader');
+exports.getReaderById = (req, res) => getEntryById(res, 'reader', req.params.id);
 
 exports.updateReaderById = async (req, res) => {
     try {
