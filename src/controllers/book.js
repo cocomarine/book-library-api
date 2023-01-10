@@ -1,9 +1,7 @@
 const { Book } = require('../models');
+const { createEntry } = require('./helpers');
 
-exports.createBook = async (req, res) => {
-    const newBook = await Book.create(req.body);
-    res.status(201).json(newBook);
-};
+exports.createBook = (req, res) => createEntry(res, 'book', req.body);
 
 exports.getAllBooks = async (_, res) => {
     const books = await Book.findAll();

@@ -1,14 +1,7 @@
 const { Reader } = require('../models');
+const { createEntry } = require('./helpers');
 
-exports.createReader = async (req, res) => {
-    try {
-        const newReader = await Reader.create(req.body);
-        res.status(201).json(newReader);
-    } catch (err) {
-        const errorMsg = err.errors.map(e => e.message);
-        res.status(400).json({ error: errorMsg[0] });
-    }
-};
+exports.createReader = (req, res) => createEntry(res, 'reader', req.body);
 
 exports.getAllReaders = async (_, res) => {
     const readers = await Reader.findAll();
@@ -62,3 +55,4 @@ exports.deleteReaderById = async (req, res) => {
     }
 
 };
+

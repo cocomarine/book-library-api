@@ -25,7 +25,7 @@ module.exports = (connection, DataTypes) => {
                 isEmail: {
                     msg: "email is in incorrect format"
                 },
-            }
+            },
         },
         password: {
             type: DataTypes.STRING,
@@ -41,7 +41,7 @@ module.exports = (connection, DataTypes) => {
                     args: [9, ],
                     msg: "password should be longer than 8 characters"
                 },
-            }
+            },
         },
     };
   

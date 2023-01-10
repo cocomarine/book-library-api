@@ -6,21 +6,25 @@ const app = require('../src/app');
 describe('/books', () => {
     before(async () => Book.sequelize.sync());
 
-    beforeEach(async () => {
-        await Book.destroy({ where: {} });
-    });
-
     describe('with no records in the database', () => {
         describe('POST /books', () => {
+
+            let testBook;
+
+            beforeEach(async () => {
+                await Book.destroy({ where: {} });
+                testBook = {
+                    title: 'The Midnight Library',
+                    author: 'Matt Haig',
+                    genre: 'Contemporary Fiction',
+                    ISBN: '978-0-525-55948-1'
+                };
+            });
+
             it('creates a new book in the database', async () => {
                 const response = await request(app)
                     .post('/books')
-                    .send({
-                        title: 'The Midnight Library',
-                        author: 'Matt Haig',
-                        genre: 'Contemporary Fiction',
-                        ISBN: '978-0-525-55948-1'
-                    });
+                    .send(testBook);
                 
                 const newBookRecord = await Book.findByPk(response.body.id, { raw: true });
                 
@@ -31,6 +35,26 @@ describe('/books', () => {
                 expect(newBookRecord.ISBN).to.equal('978-0-525-55948-1');
                 expect(response.status).to.equal(201);
             });
+
+            it('returns error when title is not provided', async () => {
+                testBook.title = null;
+                const response = await request(app)
+                    .post('/books')
+                    .send(testBook);
+
+                expect(response.status).to.equal(400);
+                expect(response.body.error).to.equal("title is required");
+            });
+
+            it('returns error when author is empty', async () => {
+                testBook.author = '  ';
+                const response = await request(app)
+                    .post('/books')
+                    .send(testBook);
+
+                expect(response.status).to.equal(400);
+                expect(response.body.error).to.equal("author cannot be empty");
+            });
         });
     });
 
@@ -38,6 +62,8 @@ describe('/books', () => {
         let books;
 
         beforeEach(async () => {
+            await Book.destroy({ where: {} });
+
             books = await Promise.all([
                 Book.create({
                     title: 'The Midnight Library',
