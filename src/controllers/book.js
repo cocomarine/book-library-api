@@ -1,4 +1,3 @@
-const { Book } = require('../models');
 const { createEntry, getAllEntry, getEntryById, updateEntryById, deleteEntryById } = require('./helpers');
 
 exports.createBook = (req, res) => createEntry(res, 'book', req.body);

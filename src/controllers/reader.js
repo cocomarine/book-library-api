@@ -1,4 +1,3 @@
-const { Reader } = require('../models');
 const { createEntry, getAllEntry, getEntryById, updateEntryById, deleteEntryById } = require('./helpers');
 
 exports.createReader = (req, res) => createEntry(res, 'reader', req.body);
