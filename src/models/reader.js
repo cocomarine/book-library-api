@@ -4,13 +4,24 @@ module.exports = (connection, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false,
             validate: {
-                notEmpty: true,
-            }
+                notNull: {
+                    msg: "name is required"
+                },
+                notEmpty: {
+                    msg: "name cannot be empty"
+                },
+            },
         },
         email: {
             type: DataTypes.STRING,
             allowNull: false,
             validate: {
+                notNull: {
+                    msg: "email is required"
+                },
+                notEmpty: {
+                    msg: "email cannot be empty"
+                },
                 isEmail: true,
             }
         },
@@ -18,6 +29,12 @@ module.exports = (connection, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false,
             validate: {
+                notNull: {
+                    msg: "password is required"
+                },
+                notEmpty: {
+                    msg: "password cannot be empty"
+                },
                 len: [8, ],
             }
         },

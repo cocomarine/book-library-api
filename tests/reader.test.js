@@ -9,21 +9,21 @@ describe('/readers', () => {
     describe('with no records in the database', () => {
         describe('POST /readers', () => {
 
-            let reader;
+            let testReader;
 
             beforeEach(async () => {
                 await Reader.destroy({ where: {} });
-                reader = {
+                testReader = {
                     name: 'Elizabeth Bennet',
                     email: 'future_ms_darcy@gmail.com',
                     password: 'abcdefghi'
-                }
+                };
             });
 
             it('creates a new reader in the database', async () => {
                 const response = await request(app)
                     .post('/readers')
-                    .send(reader);
+                    .send(testReader);
                 
                 const newReaderRecord = await Reader.findByPk(response.body.id, { raw: true });
 
@@ -34,16 +34,25 @@ describe('/readers', () => {
                 expect(response.status).to.equal(201);
             });
 
-            // it('returns error when name is not provided', async () => {
-            //     const response = await request(app)
-            //         .post('/readers')
-            //         .send({
-            //             email: 'future_ms_darcy@gmail.com',
-            //             password: 'abcdefghi'
-            //         });
+            it('returns error when name is not provided', async () => {
+                testReader.name = null;
+                const response = await request(app)
+                    .post('/readers')
+                    .send(testReader);
                 
+                expect(response.status).to.equal(400);
+                expect(response.body.error).to.equal("name is required");
+            });
 
-            // })
+            it('returns error when name is empty', async () => {
+                testReader.name = '  ';
+                const response = await request(app)
+                    .post('/readers')
+                    .send(testReader);
+                
+                expect(response.status).to.equal(400);
+                expect(response.body.error).to.equal("name cannot be empty");
+            });
         });
     });
 
@@ -52,7 +61,7 @@ describe('/readers', () => {
 
         beforeEach(async () => {
             await Reader.destroy({ where: {} });
-            
+
             readers = await Promise.all([
                 Reader.create({
                     name: 'Elizabeth Bennet',
