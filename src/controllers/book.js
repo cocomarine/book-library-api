@@ -41,3 +41,19 @@ exports.updateBookById = async (req, res) => {
         res.status(500).json(err.message);
     };
 };
+
+exports.deleteBookById = async (req, res) => {
+    try {
+        const bookId = req.params.id;
+        const book = await Book.findByPk(bookId);
+        const deletedRows = await Book.destroy({ where: { id: bookId } });
+
+        if (!book) {
+            res.status(404).json({ error: 'book does not exist'});
+        }
+
+        res.status(204).json(deletedRows);
+    } catch (err) {
+        res.status(500).json(err.message);
+    };
+};

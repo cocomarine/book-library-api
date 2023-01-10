@@ -6,20 +6,24 @@ const app = require('../src/app');
 describe('/readers', () => {
     before(async () => Reader.sequelize.sync());
 
-    beforeEach(async () => {
-        await Reader.destroy({ where: {} });
-    });
-
     describe('with no records in the database', () => {
         describe('POST /readers', () => {
+
+            let reader;
+
+            beforeEach(async () => {
+                await Reader.destroy({ where: {} });
+                reader = {
+                    name: 'Elizabeth Bennet',
+                    email: 'future_ms_darcy@gmail.com',
+                    password: 'abcdefghi'
+                }
+            });
+
             it('creates a new reader in the database', async () => {
                 const response = await request(app)
                     .post('/readers')
-                    .send({
-                        name: 'Elizabeth Bennet',
-                        email: 'future_ms_darcy@gmail.com',
-                        password: 'abcdefghi'
-                    });
+                    .send(reader);
                 
                 const newReaderRecord = await Reader.findByPk(response.body.id, { raw: true });
 
@@ -29,6 +33,17 @@ describe('/readers', () => {
                 expect(newReaderRecord.password).to.equal('abcdefghi');
                 expect(response.status).to.equal(201);
             });
+
+            // it('returns error when name is not provided', async () => {
+            //     const response = await request(app)
+            //         .post('/readers')
+            //         .send({
+            //             email: 'future_ms_darcy@gmail.com',
+            //             password: 'abcdefghi'
+            //         });
+                
+
+            // })
         });
     });
 
@@ -36,6 +51,8 @@ describe('/readers', () => {
         let readers;
 
         beforeEach(async () => {
+            await Reader.destroy({ where: {} });
+            
             readers = await Promise.all([
                 Reader.create({
                     name: 'Elizabeth Bennet',
