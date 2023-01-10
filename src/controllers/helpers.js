@@ -44,10 +44,10 @@ const getEntryById = async (res, model, id) => {
 };
 
 const updateEntryById = async (res, model, entry, id) => {
-    try {
         const Model = getModel(model);
         const entryToBeUpdated = await Model.findByPk(id);
 
+    try {
         if (!entryToBeUpdated) {
             res.status(404).json({ error: `${model} does not exist` })
         }
@@ -60,4 +60,19 @@ const updateEntryById = async (res, model, entry, id) => {
     }
 };
 
-module.exports = { getModel, createEntry, getAllEntry, getEntryById, updateEntryById };
+const deleteEntryById = async (res, model, id) => {
+        const Model = getModel(model);
+        const deletedEntry = await Model.destroy({ where: { id } });
+
+    try {
+        if (!deletedEntry) {
+            res.status(404).json({ error: `${model} does not exist` })
+        }
+
+        res.status(204).json(deletedEntry);
+    } catch (err) {
+        res.status(500).json(err.message);
+    }
+}
+
+module.exports = { getModel, createEntry, getAllEntry, getEntryById, updateEntryById, deleteEntryById };
