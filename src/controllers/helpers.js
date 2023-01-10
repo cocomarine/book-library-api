@@ -43,4 +43,21 @@ const getEntryById = async (res, model, id) => {
     }
 };
 
-module.exports = { getModel, createEntry, getAllEntry, getEntryById };
+const updateEntryById = async (res, model, entry, id) => {
+    try {
+        const Model = getModel(model);
+        const entryToBeUpdated = await Model.findByPk(id);
+
+        if (!entryToBeUpdated) {
+            res.status(404).json({ error: `${model} does not exist` })
+        }
+
+        const [ updatedEntry ] = await Model.update(entry, { where: { id }});
+        
+        res.status(200).json(updatedEntry);
+    } catch (err) {
+        res.status(500).json(err.message);
+    }
+};
+
+module.exports = { getModel, createEntry, getAllEntry, getEntryById, updateEntryById };
