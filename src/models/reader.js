@@ -22,7 +22,9 @@ module.exports = (connection, DataTypes) => {
                 notEmpty: {
                     msg: "email cannot be empty"
                 },
-                isEmail: true,
+                isEmail: {
+                    msg: "email is in incorrect format"
+                },
             }
         },
         password: {
@@ -35,7 +37,10 @@ module.exports = (connection, DataTypes) => {
                 notEmpty: {
                     msg: "password cannot be empty"
                 },
-                len: [8, ],
+                len: {
+                    args: [9, ],
+                    msg: "password should be longer than 8 characters"
+                },
             }
         },
     };

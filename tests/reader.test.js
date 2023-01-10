@@ -44,14 +44,34 @@ describe('/readers', () => {
                 expect(response.body.error).to.equal("name is required");
             });
 
-            it('returns error when name is empty', async () => {
-                testReader.name = '  ';
+            it('returns error when email is empty', async () => {
+                testReader.email = '  ';
                 const response = await request(app)
                     .post('/readers')
                     .send(testReader);
                 
                 expect(response.status).to.equal(400);
-                expect(response.body.error).to.equal("name cannot be empty");
+                expect(response.body.error).to.equal("email cannot be empty");
+            });
+
+            it('returns erorr when email is in incorrect format', async () => {
+                testReader.email = 'abcgmail.com';
+                const response = await request(app)
+                    .post('/readers')
+                    .send(testReader);
+
+                expect(response.status).to.equal(400);
+                expect(response.body.error).to.equal("email is in incorrect format");
+            });
+
+            it('returns erorr when password has 8 or shorter characters', async () => {
+                testReader.password = 'abcd';
+                const response = await request(app)
+                    .post('/readers')
+                    .send(testReader);
+
+                expect(response.status).to.equal(400);
+                expect(response.body.error).to.equal("password should be longer than 8 characters");
             });
         });
     });
@@ -76,7 +96,7 @@ describe('/readers', () => {
                 Reader.create({
                     name:'Lyra Belacqua', 
                     email: 'darknorth123@msn.org',
-                    password: 'LLLLBBBB',
+                    password: 'LLLLBBBBC',
                 })
             ]);
         });
