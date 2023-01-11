@@ -92,7 +92,7 @@ describe('/genres', () => {
                     });
 
                 expect(response.status).to.equal(400);
-                expect(response.body.error).to.equal('genre needs to be unique');
+                expect(response.body.error).to.equal('genre already exists');
             });
         });
 

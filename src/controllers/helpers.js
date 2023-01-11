@@ -12,6 +12,13 @@ const getModel = (model) => {
     return models[model];
 };
 
+const getOptions = (model) => {
+    if (model === 'book') return { include: [Genre, Author] };
+    if (model === 'genre' || model === 'author') return { include: Book }; 
+
+    return {};
+};
+
 const removePswd = (obj) => {
     if (obj.hasOwnProperty('password')) {
         delete obj.password;
@@ -36,17 +43,17 @@ const createEntry = async (res, model, entry) => {
 
 const getAllEntry = async (res, model) => {
     const Model = getModel(model);
-    const entries = await Model.findAll();
+    const entries = await Model.findAll(getOptions(model));
     const entryWithoutPswd = entries.map(entry => {
         return removePswd(entry.get());
     });
 
-    res.status(200).json(removePswd(entryWithoutPswd));
+    res.status(200).json(entryWithoutPswd);
 };
 
 const getEntryById = async (res, model, id) => {
     const Model = getModel(model);
-    const entry = await Model.findByPk(id);
+    const entry = await Model.findByPk(id, getOptions(model));
 
     try {
         if (!entry) {

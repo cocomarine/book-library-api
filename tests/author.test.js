@@ -92,7 +92,7 @@ describe('/authors', () => {
                     });
 
                 expect(response.status).to.equal(400);
-                expect(response.body.error).to.equal('author needs to be unique');
+                expect(response.body.error).to.equal('author already exists');
             });
         });
 

@@ -5,7 +5,7 @@ module.exports = (connection, DataTypes) => {
             allowNull: false,
             unique: {
                 args: [true],
-                msg: "genre needs to be unique"
+                msg: "genre already exists"
             }, 
             validate: {
                 notNull: {
