@@ -5,9 +5,11 @@ module.exports = (connection, DataTypes) => {
             allowNull: false,
             validate: {
                 notNull: {
+                    args: [true],
                     msg: "name is required"
                 },
                 notEmpty: {
+                    args: [true],
                     msg: "name cannot be empty"
                 },
             },
@@ -17,12 +19,15 @@ module.exports = (connection, DataTypes) => {
             allowNull: false,
             validate: {
                 notNull: {
+                    args: [true],
                     msg: "email is required"
                 },
                 notEmpty: {
+                    args: [true],
                     msg: "email cannot be empty"
                 },
                 isEmail: {
+                    args: [true],
                     msg: "email is in incorrect format"
                 },
             },
@@ -32,9 +37,11 @@ module.exports = (connection, DataTypes) => {
             allowNull: false,
             validate: {
                 notNull: {
+                    args: [true],
                     msg: "password is required"
                 },
                 notEmpty: {
+                    args: [true],
                     msg: "password cannot be empty"
                 },
                 len: {

@@ -5,9 +5,11 @@ module.exports = (connection, DataTypes) => {
             allowNull: false,
             validate: {
                 notNull: {
+                    args: [true],
                     msg: "title is required"
                 },
                 notEmpty: {
+                    args: [true],
                     msg: "title cannot be empty"
                 },
             },
@@ -17,9 +19,11 @@ module.exports = (connection, DataTypes) => {
             allowNull: false,
             validate: {
                 notNull: {
+                    args: [true],
                     msg: "author is required"
                 },
                 notEmpty: {
+                    args: [true],
                     msg: "author cannot be empty"
                 },
             },
