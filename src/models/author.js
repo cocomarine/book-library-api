@@ -3,12 +3,17 @@ module.exports = (connection, DataTypes) => {
         author: {
             type: DataTypes.STRING,
             allowNull: false,
-            unique: true,
+            unique: {
+                args: [true],
+                msg: "author needs to be unique"
+            },
             validate: {
                 notNull: {
+                    args: [true],
                     msg: "author is required"
                 },
                 notEmpty: {
+                    args: [true],
                     msg: "author cannot be empty"
                 },
             },
