@@ -12,6 +12,7 @@ const setupDatabase = () => {
         port: PGPORT,
         dialect: 'postgres',
         logging: false,
+        define: { timestamps: false },
     });
 
     const Reader = ReaderModel(connection, Sequelize);
@@ -21,7 +22,15 @@ const setupDatabase = () => {
 
     Genre.hasMany(Book);
     Book.belongsTo(Genre);
-    Author.hasMany(Book);
+    Author.hasMany(Book, {
+        foreignKey: {
+            allowNull: false, 
+            validate: {
+                notEmpty: true,
+                },
+            }
+        }
+    );
     Book.belongsTo(Author);
 
     connection.sync({ alter: true });

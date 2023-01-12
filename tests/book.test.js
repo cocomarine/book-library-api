@@ -1,6 +1,6 @@
 const { expect } = require('chai');
 const request = require('supertest');
-const { Book } = require('../src/models');
+const { Book, Author, Genre } = require('../src/models');
 const app = require('../src/app');
 
 describe('/books', () => {
@@ -10,15 +10,24 @@ describe('/books', () => {
         describe('POST /books', () => {
 
             let testBook;
+            let testAuthor;
+            let testGenre;
 
             beforeEach(async () => {
                 await Book.destroy({ where: {} });
+                await Author.destroy({ where: {} });
+                await Genre.destroy({ where: {} });
+
+                testAuthor = await Author.create({ author: 'Matt Haig' });
+                testGenre = await Genre.create({ genre: 'Contemporary Fiction' });
+
                 testBook = {
                     title: 'The Midnight Library',
-                    author: 'Matt Haig',
-                    genre: 'Contemporary Fiction',
-                    ISBN: '978-0-525-55948-1'
+                    ISBN: '978-0-525-55948-1',
+                    AuthorId: testAuthor.id,
+                    GenreId: testGenre.id,
                 };
+
             });
 
             it('creates a new book in the database', async () => {
@@ -27,13 +36,13 @@ describe('/books', () => {
                     .send(testBook);
                 
                 const newBookRecord = await Book.findByPk(response.body.id, { raw: true });
-                
+
+                expect(response.status).to.equal(201);
                 expect(response.body.title).to.equal('The Midnight Library');
                 expect(newBookRecord.title).to.equal('The Midnight Library');
-                expect(newBookRecord.author).to.equal('Matt Haig');
-                expect(newBookRecord.genre).to.equal('Contemporary Fiction');
+                expect(newBookRecord.AuthorId).to.equal(testAuthor.id);
+                expect(newBookRecord.GenreId).to.equal(testGenre.id);
                 expect(newBookRecord.ISBN).to.equal('978-0-525-55948-1');
-                expect(response.status).to.equal(201);
             });
 
             it('returns error when title is not provided', async () => {
@@ -46,42 +55,76 @@ describe('/books', () => {
                 expect(response.body.error).to.equal("title is required");
             });
 
-            it('returns error when author is empty', async () => {
-                testBook.author = '  ';
+            it('returns error when title is empty', async () => {
+                testBook.title = '  ';
                 const response = await request(app)
                     .post('/books')
                     .send(testBook);
 
                 expect(response.status).to.equal(400);
-                expect(response.body.error).to.equal("author cannot be empty");
+                expect(response.body.error).to.equal("title cannot be empty");
+            });
+
+            it('returns error when author is not provided', async () => {
+                testBook.AuthorId = null;
+                const response = await request(app)
+                    .post('/books')
+                    .send(testBook);
+
+                expect(response.status).to.equal(400);
+                expect(response.body.error).to.equal("Book.AuthorId cannot be null");
+            });
+
+            it('returns error when author is empty', async () => {
+                testBook.AuthorId = '  ';
+                const response = await request(app)
+                    .post('/books')
+                    .send(testBook);   
+                
+                expect(response.status).to.equal(400);
+                expect(response.body.error).to.equal("Validation notEmpty on AuthorId failed");
             });
         });
     });
 
     describe('with records in the database', () => {
-        let books;
+        let testBooks;
+        let testAuthors;
+        let testGenres;
 
         beforeEach(async () => {
             await Book.destroy({ where: {} });
+            await Author.destroy({ where: {} });
+            await Genre.destroy({ where: {} });
+            
+            testAuthors = await Promise.all([
+                Author.create({ author: 'Matt Haig' }),
+                Author.create({ author: 'Kate Ellis' })
+            ]);
+            
+            testGenres = await Promise.all([
+                Genre.create({ genre: 'Contemporary Fiction '}),
+                Genre.create({ genre: 'Crime and Mystery '})
+            ]);
 
-            books = await Promise.all([
+            testBooks = await Promise.all([
                 Book.create({
                     title: 'The Midnight Library',
-                    author: 'Matt Haig',
-                    genre: 'Contemporary Fiction',
-                    ISBN: '978-0-525-55948-1'
+                    ISBN: '978-0-525-55948-1',
+                    AuthorId: testAuthors[0].id,
+                    GenreId: testGenres[0].id
                 }),
                 Book.create({
                     title: 'The Stone Chamber',
-                    author: 'Kate Ellis',
-                    genre: 'Crime and Mistery',
-                    ISBN: '978-0-349-42571-9'
+                    ISBN: '978-0-349-42571-9',
+                    AuthorId: testAuthors[1].id,
+                    GenreId: testGenres[1].id
                 }),
                 Book.create({
-                    title: 'What I Talk About When I Talk About Running',
-                    author: 'Haruki Murakami',
-                    genre: 'Memoir',
-                    ISBN: '0-307-26919-1'
+                    title: 'How To Stop Time',
+                    ISBN: '978-0-525-52289-8',
+                    AuthorId: testAuthors[0].id,
+                    GenreId: testGenres[0].id
                 })
             ]);
         });
@@ -94,11 +137,11 @@ describe('/books', () => {
                 expect(response.body.length).to.equal(3);
 
                 response.body.forEach((book) => {
-                    const expected = books.find((a) => a.id === book.id);
+                    const expected = testBooks.find((a) => a.id === book.id);
 
                     expect(book.title).to.equal(expected.title);
-                    expect(book.author).to.equal(expected.author);
-                    expect(book.genre).to.equal(expected.genre);
+                    // expect(book.author).to.equal(expected.author);
+                    // expect(book.genre).to.equal(expected.genre);
                     expect(book.ISBN).to.equal(expected.ISBN);
                 });
             });
@@ -106,7 +149,7 @@ describe('/books', () => {
 
         describe('GET /books/:id', () => {
             it('gets books record by id', async () => {
-                const book = books[0];
+                const book = testBooks[0];
                 const response = await request(app).get(`/books/${book.id}`);
 
                 expect(response.status).to.equal(200);
@@ -126,7 +169,7 @@ describe('/books', () => {
 
         describe('PATCH /books/:id', () => {
             it('updates books genre by id', async () => {
-                const book = books[0];
+                const book = testBooks[0];
                 const response = await request(app)
                     .patch(`/books/${book.id}`)
                     .send({ genre: 'Contemporary Fantasy'})
@@ -148,7 +191,7 @@ describe('/books', () => {
 
         describe('DELETE /books/:id', () => {
             it('deletes book record by id', async () => {
-                const book = books[0];
+                const book = testBooks[0];
                 const response = await request(app).delete(`/books/${book.id}`);
                 const deletedBook = await Book.findByPk(book.id, { raw: true });
 
