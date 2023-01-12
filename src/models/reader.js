@@ -3,6 +3,10 @@ module.exports = (connection, DataTypes) => {
         name: {
             type: DataTypes.STRING,
             allowNull: false,
+            unique: {
+                args: [true],
+                msg: "name already exists"
+            },
             validate: {
                 notNull: {
                     args: [true],
@@ -17,6 +21,10 @@ module.exports = (connection, DataTypes) => {
         email: {
             type: DataTypes.STRING,
             allowNull: false,
+            unique: {
+                args: [true],
+                msg: "email already exists"
+            },
             validate: {
                 notNull: {
                     args: [true],

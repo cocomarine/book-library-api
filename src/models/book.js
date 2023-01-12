@@ -16,7 +16,10 @@ module.exports = (connection, DataTypes) => {
         },
         ISBN: {
             type: DataTypes.STRING,
-            unique: true,
+            unique: {
+                args: [true],
+                msg: "ISBN already exists"
+            },
         },
     };
 

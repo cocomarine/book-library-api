@@ -73,7 +73,7 @@ describe('/authors', () => {
         });
 
         describe('POST /authors', () => {
-            it('create a new author int the existing database', async () => {
+            it('add a new author to the existing database', async () => {
                 const response = await request(app)
                     .post('/authors')
                     .send({

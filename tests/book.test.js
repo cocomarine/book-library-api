@@ -39,6 +39,8 @@ describe('/books', () => {
 
                 expect(response.status).to.equal(201);
                 expect(response.body.title).to.equal('The Midnight Library');
+                expect(response.body.ISBN).to.equal('978-0-525-55948-1');
+
                 expect(newBookRecord.title).to.equal('The Midnight Library');
                 expect(newBookRecord.AuthorId).to.equal(testAuthor.id);
                 expect(newBookRecord.GenreId).to.equal(testGenre.id);
@@ -129,6 +131,42 @@ describe('/books', () => {
             ]);
         });
 
+        describe('POST /books', () => {
+            it('add a new book to the existing database', async () => {
+                const response = await request(app)
+                    .post('/books')
+                    .send({
+                        title: 'The Humans',
+                        ISBN: '978-0-099-12345-2',
+                        AuthorId: testAuthors[0].id,
+                        GenreId: testGenres[1].id
+                    });
+
+                const newBookRecord = await Book.findByPk(response.body.id, { raw: true });
+
+                expect(response.status).to.equal(201);
+                expect(response.body.title).to.equal('The Humans');
+                expect(response.body.ISBN).to.equal('978-0-099-12345-2');    
+
+                expect(newBookRecord.title).to.equal('The Humans');
+                expect(newBookRecord.ISBN).to.equal('978-0-099-12345-2');                
+            });
+
+            it('returns an error if the ISBN already exists', async () => {
+                const response = await request(app)
+                    .post('/books')
+                    .send({
+                        title: 'Something else',
+                        ISBN: '978-0-525-52289-8',
+                        AuthorId: testAuthors[1].id,
+                        GenreId: testGenres[0].id
+                    });
+
+                expect(response.status).to.equal(400);
+                expect(response.body.error).to.equal('ISBN already exists');
+            });
+        });
+
         describe('GET /books', () => {
             it('gets all book records', async () => {
                 const response = await request(app).get('/books');
@@ -140,8 +178,6 @@ describe('/books', () => {
                     const expected = testBooks.find((a) => a.id === book.id);
 
                     expect(book.title).to.equal(expected.title);
-                    // expect(book.author).to.equal(expected.author);
-                    // expect(book.genre).to.equal(expected.genre);
                     expect(book.ISBN).to.equal(expected.ISBN);
                 });
             });
