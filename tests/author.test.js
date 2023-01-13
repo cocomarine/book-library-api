@@ -54,12 +54,12 @@ describe('/authors', () => {
     });
 
     describe('with records in the database', () => {
-        let authors;
+        let testAuthors;
 
         beforeEach(async () => {
             await Author.destroy({ where: {} });
 
-            authors = await Promise.all([
+            testAuthors = await Promise.all([
                 Author.create({
                     author: 'Matt Haig'
                 }),
@@ -104,8 +104,7 @@ describe('/authors', () => {
                 expect(response.body.length).to.equal(3);
 
                 response.body.forEach((author) => {
-                    const expected = authors.find((a) => a.id === author.id);
-                     
+                    const expected = testAuthors.find((a) => a.id === author.id);
                     expect(author.author).to.equal(expected.author);
                 });
             });
@@ -113,7 +112,7 @@ describe('/authors', () => {
 
         describe('GET /authors/:id', () => {
             it('gets authors record by id', async () => {
-                const author = authors[0];
+                const author = testAuthors[0];
                 const response = await request(app).get(`/authors/${author.id}`);
         
                 expect(response.status).to.equal(200);
@@ -130,7 +129,7 @@ describe('/authors', () => {
 
         describe('PATCH /authors/:id', () => {
             it('updates authors name by id', async () => {
-                const author = authors[0];
+                const author = testAuthors[0];
                 const response = await request(app)
                     .patch(`/authors/${author.id}`)
                     .send({ author: 'some other name' });
@@ -154,7 +153,7 @@ describe('/authors', () => {
 
         describe('DELETE /authors/:id', () => {
             it('deletes author record by id', async () => {
-                const author = authors[0];
+                const author = testAuthors[0];
                 const response = await request(app).delete(`/authors/${author.id}`);
                 const deletedAuthor = await Author.findByPk(author.id, { raw: true });
 

@@ -54,12 +54,12 @@ describe('/genres', () => {
     });
 
     describe('with records in the database', () => {
-        let genres;
+        let testGenres;
 
         beforeEach(async () => {
             await Genre.destroy({ where: {} });
 
-            genres = await Promise.all([
+            testGenres = await Promise.all([
                 Genre.create({
                     genre: 'Contemporary Fiction',
                 }),
@@ -104,7 +104,7 @@ describe('/genres', () => {
                 expect(response.body.length).to.equal(3);
 
                 response.body.forEach((genre) => {
-                    const expected = genres.find((a) => a.id === genre.id);
+                    const expected = testGenres.find((a) => a.id === genre.id);
                      
                     expect(genre.genre).to.equal(expected.genre);
                 });
@@ -113,7 +113,7 @@ describe('/genres', () => {
 
         describe('GET /genres/:id', () => {
             it('gets genres record by id', async () => {
-                const genre = genres[0];
+                const genre = testGenres[0];
                 const response = await request(app).get(`/genres/${genre.id}`);
         
                 expect(response.status).to.equal(200);
@@ -130,7 +130,7 @@ describe('/genres', () => {
 
         describe('PATCH /genres/:id', () => {
             it('updates genres name by id', async () => {
-                const genre = genres[0];
+                const genre = testGenres[0];
                 const response = await request(app)
                     .patch(`/genres/${genre.id}`)
                     .send({ genre: 'some other name' });
@@ -155,7 +155,7 @@ describe('/genres', () => {
 
         describe('DELETE /genres/:id', () => {
             it('deletes genre record by id', async () => {
-                const genre = genres[0];
+                const genre = testGenres[0];
                 const response = await request(app).delete(`/genres/${genre.id}`);
                 const deletedGenre = await Genre.findByPk(Genre.id, { raw: true });
 

@@ -20,7 +20,14 @@ const setupDatabase = () => {
     const Author = AuthorModel(connection, Sequelize);
     const Genre = GenreModel(connection, Sequelize);
 
-    Genre.hasMany(Book);
+    Genre.hasMany(Book, {
+        foreignKey: {
+            allowNull: false,
+            validate: {
+                notEmpty: true,
+            },
+        },
+    });
     Book.belongsTo(Genre);
     Author.hasMany(Book, {
         foreignKey: {
@@ -28,9 +35,8 @@ const setupDatabase = () => {
             validate: {
                 notEmpty: true,
                 },
-            }
-        }
-    );
+            },
+        });
     Book.belongsTo(Author);
 
     connection.sync({ alter: true });
