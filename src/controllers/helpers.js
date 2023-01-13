@@ -13,8 +13,8 @@ const getModel = (model) => {
 };
 
 const getOptions = (model) => {
-    if (model === 'book') return { include: [Genre, Author] };
-    if (model === 'genre' || model === 'author') return { include: Book }; 
+    if (model === 'book') return { include: [Genre, Author, Reader] };
+    if (model === 'genre' || model === 'author' || model === 'reader') return { include: Book }; 
 
     return {};
 };
@@ -44,9 +44,16 @@ const createEntry = async (res, model, entry) => {
 const getAllEntry = async (res, model) => {
     const Model = getModel(model);
     const entries = await Model.findAll(getOptions(model));
-    const entryWithoutPswd = entries.map(entry => {
-        return removePswd(entry.get());
-    });
+
+    if (model === 'book') {
+        entries.forEach((entry) => {
+            if (entry.Reader) {
+                removePswd(entry.Reader.get());
+            }
+        });
+    };
+
+    const entryWithoutPswd = entries.map(entry => removePswd(entry.get()));
 
     res.status(200).json(entryWithoutPswd);
 };
@@ -56,9 +63,9 @@ const getEntryById = async (res, model, id) => {
     const entry = await Model.findByPk(id, getOptions(model));
 
     try {
-        if (!entry) {
-            res.status(404).json(getError404(model));
-        }
+        if (!entry) res.status(404).json(getError404(model));
+    
+        if (model === 'book' && entry.Reader) removePswd(entry.Reader.get());
 
         const entryWithoutPswd = removePswd(entry.get());
 
@@ -73,9 +80,7 @@ const updateEntryById = async (res, model, entry, id) => {
         const [ entryUpdated ] = await Model.update(entry, { where: { id } });
 
     try {
-        if (!entryUpdated) {
-            res.status(404).json(getError404(model));
-        }
+        if (!entryUpdated) res.status(404).json(getError404(model));
 
         const updatedEntry = await Model.findByPk(id);
         const entryWithoutPswd = removePswd(updatedEntry.get());
@@ -91,9 +96,7 @@ const deleteEntryById = async (res, model, id) => {
         const deletedEntry = await Model.destroy({ where: { id } });
 
     try {
-        if (!deletedEntry) {
-            res.status(404).json(getError404(model));
-        }
+        if (!deletedEntry) res.status(404).json(getError404(model));
 
         res.status(204).json(deletedEntry);
     } catch (err) {
@@ -101,4 +104,4 @@ const deleteEntryById = async (res, model, id) => {
     }
 };
 
-module.exports = { getModel, createEntry, getAllEntry, getEntryById, updateEntryById, deleteEntryById, getModel };
+module.exports = { getModel, createEntry, getAllEntry, getEntryById, updateEntryById, deleteEntryById };
