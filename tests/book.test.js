@@ -177,8 +177,8 @@ describe('/books', () => {
                 response.body.forEach((book) => {
                     const expected = testBooks.find((a) => a.id === book.id);
 
-                    expect(book.title).to.equal(expected.title);
-                    expect(book.ISBN).to.equal(expected.ISBN);
+                    expect(expected.title).to.equal(book.title);
+                    expect(expected.ISBN).to.equal(book.ISBN);
                 });
             });
         });
@@ -190,8 +190,8 @@ describe('/books', () => {
 
                 expect(response.status).to.equal(200);
                 expect(response.body.title).to.equal(book.title);
-                expect(response.body.author).to.equal(book.author);
-                expect(response.body.genre).to.equal(book.genre);
+                expect(response.body.Author.id).to.equal(book.AuthorId);
+                expect(response.body.Genre.id).to.equal(book.GenreId);
                 expect(response.body.ISBN).to.equal(book.ISBN);
             });
 
@@ -204,15 +204,28 @@ describe('/books', () => {
         });
 
         describe('PATCH /books/:id', () => {
-            it('updates books genre by id', async () => {
+            it('updates book title by id', async () => {
                 const book = testBooks[0];
                 const response = await request(app)
                     .patch(`/books/${book.id}`)
-                    .send({ genre: 'Contemporary Fantasy'})
-                const updateBookRecord = await Book.findByPk(book.id, { raw: true })
+                    .send({ title: 'The Midnight Train'});
+
+                const updateBookRecord = await Book.findByPk(book.id, { raw: true });
            
                 expect(response.status).to.equal(200);
-                expect(updateBookRecord.genre).to.equal('Contemporary Fantasy');
+                expect(updateBookRecord.title).to.equal('The Midnight Train');
+            });
+
+            it('updates book GenreId by id', async () => {
+                const book = testBooks[0];
+                const response = await request(app)
+                    .patch(`/books/${book.id}`)
+                    .send({ GenreId: testGenres[1].id });
+                    
+                const updatedBookRecord = await Book.findByPk(book.id, { raw: true });
+
+                expect(response.status).to.equal(200);
+                expect(updatedBookRecord.GenreId).to.equal(testGenres[1].id);
             });
 
             it('returns a 404 if the book does not exist', async () => {
