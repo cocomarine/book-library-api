@@ -13,7 +13,7 @@ describe('/authors', () => {
             let testAuthor;
 
             beforeEach(async () => {
-                await Author.destroy({ where: {} });
+                await Author.destroy({ where: {} });   
                 testAuthor = {
                     author: 'Matt Haig',
                 };
@@ -25,7 +25,6 @@ describe('/authors', () => {
                     .send(testAuthor);
                 
                 const newAuthorRecord = await Author.findByPk(response.body.id, { raw: true });
-
                 expect(newAuthorRecord.author).to.equal('Matt Haig');
 
                 expect(response.body.author).to.equal('Matt Haig');

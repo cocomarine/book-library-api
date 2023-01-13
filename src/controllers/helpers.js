@@ -101,4 +101,4 @@ const deleteEntryById = async (res, model, id) => {
     }
 };
 
-module.exports = { getModel, createEntry, getAllEntry, getEntryById, updateEntryById, deleteEntryById };
+module.exports = { getModel, createEntry, getAllEntry, getEntryById, updateEntryById, deleteEntryById, getModel };

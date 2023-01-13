@@ -28,7 +28,6 @@ describe('/books', () => {
                     AuthorId: testAuthor.id,
                     GenreId: testGenre.id,
                 };
-
             });
 
             it('creates a new book in the database', async () => {
