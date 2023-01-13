@@ -28,21 +28,13 @@ const setupDatabase = () => {
             },
         },
     });
-    // Book.belongsTo(Reader, {
-    //     foreignKey: {
-    //         allowNull: true,
-    //         validate: {
-    //             notEmpty: true,
-    //         },
-    //     },        
-    // });
-    Book.hasOne(Reader, {
+    Book.belongsTo(Reader, {
         foreignKey: {
             allowNull: true,
             validate: {
                 notEmpty: true,
             },
-        },
+        },        
     });
     Genre.hasMany(Book, {
         foreignKey: {

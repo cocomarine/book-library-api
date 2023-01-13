@@ -1,6 +1,6 @@
 const { expect } = require('chai');
 const request = require('supertest');
-const { Book, Author, Genre } = require('../src/models');
+const { Book, Author, Genre, Reader } = require('../src/models');
 const { errorNull, errorEmpty, errorNotUnique, errorNotPresent } = require('./helpers');
 const app = require('../src/app');
 
@@ -13,20 +13,28 @@ describe('/books', () => {
             let testBook;
             let testAuthor;
             let testGenre;
+            let testReader;
 
             beforeEach(async () => {
                 await Book.destroy({ where: {} });
                 await Author.destroy({ where: {} });
                 await Genre.destroy({ where: {} });
+                await Reader.destroy({ where: { }});
 
                 testAuthor = await Author.create({ author: 'Matt Haig' });
                 testGenre = await Genre.create({ genre: 'Contemporary Fiction' });
+                testReader = await Reader.create({
+                    name: "Amelia Dolan",
+                    email: "miadolan@hotmail.com",
+                    password: "PASSWORD123",
+                });
 
                 testBook = {
                     title: 'The Midnight Library',
                     ISBN: '978-0-525-55948-1',
                     AuthorId: testAuthor.id,
                     GenreId: testGenre.id,
+                    ReaderId: testReader.id
                 };
             });
 
@@ -44,6 +52,7 @@ describe('/books', () => {
                 expect(newBookRecord.title).to.equal('The Midnight Library');
                 expect(newBookRecord.AuthorId).to.equal(testAuthor.id);
                 expect(newBookRecord.GenreId).to.equal(testGenre.id);
+                expect(newBookRecord.ReaderId).to.equal(testReader.id);
                 expect(newBookRecord.ISBN).to.equal('978-0-525-55948-1');
             });
 

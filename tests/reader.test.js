@@ -1,6 +1,6 @@
 const { expect } = require('chai');
 const request = require('supertest');
-const { Reader } = require('../src/models');
+const { Reader, Book, Author, Genre } = require('../src/models');
 const { errorNull, errorEmpty, errorNotUnique, errorNotPresent } = require('./helpers');
 const app = require('../src/app');
 
@@ -14,10 +14,11 @@ describe('/readers', () => {
 
             beforeEach(async () => {
                 await Reader.destroy({ where: {} });
+
                 testReader = {
-                    name: 'Elizabeth Bennet',
-                    email: 'future_ms_darcy@gmail.com',
-                    password: 'abcdefghi'
+                    name: "Amelia Dolan",
+                    email: "miadolan@hotmail.com",
+                    password: "PASSWORD123"
                 };
             });
 
@@ -28,15 +29,14 @@ describe('/readers', () => {
                 
                 const newReaderRecord = await Reader.findByPk(response.body.id, { raw: true });
 
-                expect(response.body.name).to.equal('Elizabeth Bennet');
-                expect(response.body.email).to.equal('future_ms_darcy@gmail.com');
+                expect(response.status).to.equal(201);
+                expect(response.body.name).to.equal('Amelia Dolan');
+                expect(response.body.email).to.equal('miadolan@hotmail.com');
                 expect(response.body.password).to.equal(undefined);
 
-                expect(newReaderRecord.name).to.equal('Elizabeth Bennet');
-                expect(newReaderRecord.email).to.equal('future_ms_darcy@gmail.com');
-                expect(newReaderRecord.password).to.equal('abcdefghi');
-
-                expect(response.status).to.equal(201);
+                expect(newReaderRecord.name).to.equal('Amelia Dolan');
+                expect(newReaderRecord.email).to.equal('miadolan@hotmail.com');
+                expect(newReaderRecord.password).to.equal('PASSWORD123');
             });
 
             it('returns error when name is not provided', async () => {
@@ -64,7 +64,7 @@ describe('/readers', () => {
                 const response = await request(app)
                     .post('/readers')
                     .send(testReader);
-
+                
                 expect(response.status).to.equal(400);
                 expect(response.body.error).to.equal("email is in incorrect format");
             });
