@@ -1,6 +1,7 @@
 const { expect } = require('chai');
 const request = require('supertest');
 const { Reader } = require('../src/models');
+const { errorNull, errorEmpty, errorNotUnique, errorNotPresent } = require('./helpers');
 const app = require('../src/app');
 
 describe('/readers', () => {
@@ -45,7 +46,7 @@ describe('/readers', () => {
                     .send(testReader);
                 
                 expect(response.status).to.equal(400);
-                expect(response.body.error).to.equal("name is required");
+                expect(response.body.error).to.equal(errorNull('name'));
             });
 
             it('returns error when email is empty', async () => {
@@ -55,7 +56,7 @@ describe('/readers', () => {
                     .send(testReader);
                 
                 expect(response.status).to.equal(400);
-                expect(response.body.error).to.equal("email cannot be empty");
+                expect(response.body.error).to.equal(errorEmpty('email'));
             });
 
             it('returns erorr when email is in incorrect format', async () => {
@@ -105,6 +106,42 @@ describe('/readers', () => {
             ]);
         });
 
+        describe('POST /readers', () => {
+            it('adds a new reader to the existing database', async () => {
+                const response = await request(app)
+                    .post('/readers')
+                    .send({
+                        name: "Amelia Dolan",
+                        email: "miadolan@hotmail.com",
+                        password: "PASSWORD123"
+                    });
+                
+                const newReaderRecord = await Reader.findByPk(response.body.id, { raw: true });
+
+                expect(response.status).to.equal(201);
+                expect(response.body.name).to.equal('Amelia Dolan');
+                expect(response.body.email).to.equal('miadolan@hotmail.com');
+                expect(response.body.password).to.equal(undefined);
+
+                expect(newReaderRecord.name).to.equal('Amelia Dolan');
+                expect(newReaderRecord.email).to.equal('miadolan@hotmail.com');
+                expect(newReaderRecord.password).to.equal('PASSWORD123');
+            });
+
+            it('returns an error if the reader is not unique', async () => {
+                const response = await request(app)
+                    .post('/readers')
+                    .send({
+                        name: "Elizabeth Bennet",
+                        email: "miadolan@hotmail.com",
+                        password: "PASSWORD123"
+                    });
+                
+                expect(response.status).to.equal(400);
+                expect(response.body.error).to.equal(errorNotUnique('name'));     
+            });
+        });
+
         describe('GET /readers', () => {
             it('gets all readers records', async () => {
                 const response = await request(app).get('/readers');
@@ -137,7 +174,7 @@ describe('/readers', () => {
                 const response = await request(app).get('/readers/12345');
                 
                 expect(response.status).to.equal(404);
-                expect(response.body.error).to.equal('reader does not exist');
+                expect(response.body.error).to.equal(errorNotPresent('reader'));
             });
         });
 
@@ -161,7 +198,7 @@ describe('/readers', () => {
                     .send({ email: 'some_other_email@gmail.com' });
 
                 expect(response.status).to.equal(404);
-                expect(response.body.error).to.equal('reader does not exist');
+                expect(response.body.error).to.equal(errorNotPresent('reader'));
             });
         });
 
@@ -178,7 +215,7 @@ describe('/readers', () => {
             it('returns a 404 if the reader does not exist', async () => {
                 const response = await request(app).delete('/readers/12345');
                 expect(response.status).to.equal(404);
-                expect(response.body.error).to.equal('reader does not exist');
+                expect(response.body.error).to.equal(errorNotPresent('reader'));
             });
         });
     });

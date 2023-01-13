@@ -1,6 +1,7 @@
 const { expect } = require('chai');
 const request = require('supertest');
 const { Genre } = require('../src/models');
+const { errorNull, errorEmpty, errorNotUnique, errorNotPresent } = require('./helpers');
 const app = require('../src/app');
 
 describe('/genres', () => {
@@ -38,7 +39,7 @@ describe('/genres', () => {
                     .send(testGenre);
                 
                 expect(response.status).to.equal(400);
-                expect(response.body.error).to.equal("genre is required");
+                expect(response.body.error).to.equal(errorNull('genre'));
             });
 
             it('returns error when genre is empty', async () => {
@@ -48,7 +49,7 @@ describe('/genres', () => {
                     .send(testGenre);
                 
                 expect(response.status).to.equal(400);
-                expect(response.body.error).to.equal("genre cannot be empty");
+                expect(response.body.error).to.equal(errorEmpty('genre'));
             });
         });
     });
@@ -80,8 +81,12 @@ describe('/genres', () => {
                         genre: 'Science Fiction',
                     });
 
+                const newGenreRecord = await Genre.findByPk(response.body.id, { raw: true });
+
                 expect(response.body.genre).to.equal('Science Fiction');
                 expect(response.status).to.equal(201);
+
+                expect(newGenreRecord.genre).to.equal('Science Fiction');
             });
 
             it('returns an error if the genre is not unique', async () => {
@@ -92,7 +97,7 @@ describe('/genres', () => {
                     });
 
                 expect(response.status).to.equal(400);
-                expect(response.body.error).to.equal('genre already exists');
+                expect(response.body.error).to.equal(errorNotUnique('genre'));
             });
         });
 
@@ -124,7 +129,7 @@ describe('/genres', () => {
                 const response = await request(app).get('/genres/12345');
                 
                 expect(response.status).to.equal(404);
-                expect(response.body.error).to.equal('genre does not exist');
+                expect(response.body.error).to.equal(errorNotPresent('genre'));
             });
         });
 
@@ -149,7 +154,7 @@ describe('/genres', () => {
                     .send({ genre: 'some other name' });
 
                 expect(response.status).to.equal(404);
-                expect(response.body.error).to.equal('genre does not exist');
+                expect(response.body.error).to.equal(errorNotPresent('genre'));
             });
         });
 
@@ -166,7 +171,7 @@ describe('/genres', () => {
             it('returns a 404 if the genre does not exist', async () => {
                 const response = await request(app).delete('/genres/12345');
                 expect(response.status).to.equal(404);
-                expect(response.body.error).to.equal('genre does not exist');
+                expect(response.body.error).to.equal(errorNotPresent('genre'));
             });
         });
     });

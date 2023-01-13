@@ -1,6 +1,7 @@
 const { expect } = require('chai');
 const request = require('supertest');
 const { Book, Author, Genre } = require('../src/models');
+const { errorNull, errorEmpty, errorNotUnique, errorNotPresent } = require('./helpers');
 const app = require('../src/app');
 
 describe('/books', () => {
@@ -54,7 +55,7 @@ describe('/books', () => {
                     .send(testBook);
 
                 expect(response.status).to.equal(400);
-                expect(response.body.error).to.equal("title is required");
+                expect(response.body.error).to.equal(errorNull('title'));
             });
 
             it('returns error when title is empty', async () => {
@@ -64,7 +65,7 @@ describe('/books', () => {
                     .send(testBook);
 
                 expect(response.status).to.equal(400);
-                expect(response.body.error).to.equal("title cannot be empty");
+                expect(response.body.error).to.equal(errorEmpty('title'));
             });
 
             it('returns error when author is not provided', async () => {
@@ -163,7 +164,7 @@ describe('/books', () => {
                     });
 
                 expect(response.status).to.equal(400);
-                expect(response.body.error).to.equal('ISBN already exists');
+                expect(response.body.error).to.equal(errorNotUnique('ISBN'));
             });
         });
 
@@ -199,7 +200,7 @@ describe('/books', () => {
                 const response = await request(app).get('/books/12345');
 
                 expect(response.status).to.equal(404);
-                expect(response.body.error).to.equal('book does not exist');
+                expect(response.body.error).to.equal(errorNotPresent('book'));
             });
         });
 
@@ -234,7 +235,7 @@ describe('/books', () => {
                     .send({ genre: 'Some other genre'});
 
                 expect(response.status).to.equal(404);
-                expect(response.body.error).to.equal('book does not exist');
+                expect(response.body.error).to.equal(errorNotPresent('book'));
             });
         });
 
@@ -251,7 +252,7 @@ describe('/books', () => {
             it('returns a 404 if the book does not exist', async () => {
                 const response = await request(app).delete('/books/12345');
                 expect(response.status).to.equal(404);
-                expect(response.body.error).to.equal('book does not exist');
+                expect(response.body.error).to.equal(errorNotPresent('book'));
             });
         });
     });

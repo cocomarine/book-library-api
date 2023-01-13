@@ -1,6 +1,7 @@
 const { expect } = require('chai');
 const request = require('supertest');
 const { Author } = require('../src/models');
+const { errorNull, errorEmpty, errorNotUnique, errorNotPresent } = require('./helpers');
 const app = require('../src/app');
 
 describe('/authors', () => {
@@ -38,7 +39,7 @@ describe('/authors', () => {
                     .send(testAuthor);
                 
                 expect(response.status).to.equal(400);
-                expect(response.body.error).to.equal("author is required");
+                expect(response.body.error).to.equal(errorNull('author'));
             });
 
             it('returns error when author is empty', async () => {
@@ -48,7 +49,7 @@ describe('/authors', () => {
                     .send(testAuthor);
                 
                 expect(response.status).to.equal(400);
-                expect(response.body.error).to.equal("author cannot be empty");
+                expect(response.body.error).to.equal(errorEmpty('author'));
             });
         });
     });
@@ -80,8 +81,12 @@ describe('/authors', () => {
                         author: 'Frank Herbert',
                     });
 
-                expect(response.body.author).to.equal('Frank Herbert');
+                const newAuthorRecord = await Author.findByPk(response.body.id, { raw: true });
+
                 expect(response.status).to.equal(201);
+                expect(response.body.author).to.equal('Frank Herbert');
+
+                expect(newAuthorRecord.author).to.equal('Frank Herbert');
             });
 
             it('returns an error if the author is not unique', async () => {
@@ -92,7 +97,7 @@ describe('/authors', () => {
                     });
 
                 expect(response.status).to.equal(400);
-                expect(response.body.error).to.equal('author already exists');
+                expect(response.body.error).to.equal(errorNotUnique('author'));
             });
         });
 
@@ -123,7 +128,7 @@ describe('/authors', () => {
                 const response = await request(app).get('/authors/12345');
                 
                 expect(response.status).to.equal(404);
-                expect(response.body.error).to.equal('author does not exist');
+                expect(response.body.error).to.equal(errorNotPresent('author'));
             });
         });
 
@@ -147,7 +152,7 @@ describe('/authors', () => {
                     .send({ author: 'some other name' });
 
                 expect(response.status).to.equal(404);
-                expect(response.body.error).to.equal('author does not exist');
+                expect(response.body.error).to.equal(errorNotPresent('author'));
             });
         });
 
@@ -164,7 +169,7 @@ describe('/authors', () => {
             it('returns a 404 if the author does not exist', async () => {
                 const response = await request(app).delete('/authors/12345');
                 expect(response.status).to.equal(404);
-                expect(response.body.error).to.equal('author does not exist');
+                expect(response.body.error).to.equal(errorNotPresent('author'));
             });
         });
     });
