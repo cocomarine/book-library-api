@@ -4,7 +4,11 @@ A book library API created using an Express.js app connected via Sequelize to a 
 
 
 ## Table of contents
-
+- [Introduction](#-introduction)
+- [Concepts covered](#-concepts-covered)
+- [Setup & getting started](#-setup-&-getting-started)
+- [API end points](#-API-end-points)
+- [Models](#-models)
 
 ## Introduction
 Following on from the music library project (https://github.com/cocomarine/music-library), this project involves creating an Express API that stores information about readers, books, genres and authors. Users can create accounts ('readers') and list books ('books') with their genre ('genres') and author ('authors') information for browsing books. When a book is loaned or returned by a user, the book record is updated by adding or removing the user's ID ('ReaderId'). 
