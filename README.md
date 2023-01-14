@@ -42,11 +42,11 @@ docker run --name postgres -p 5432:5432 -e POSTGRES_PASSWORD=password -d postgre
     - user: postgres
     - password: password
 
-4. Fork and clone the repo and initialize it running following commands:
+4. Fork and clone the repo and initialize it by running following commands:
 ```bash
 git init # initializing a git repo
 npm init -y # initializing a node project creating a default package.json
-npx gitignore node # creating a .gitignore file. Make sure to add 'node_modules' afterward.
+npx gitignore node # creating a .gitignore file. Make sure to add 'node_modules' to it.
 npx eslint --init # setting up and initializing eslint to help with code formatting
 ```
 5. Set up the application by installing express, pg, dotenv and nodemon. 
