@@ -58,9 +58,8 @@ module.exports = (connection, DataTypes) => {
                 },
             },
         },
-        // books: DataTypes.STRING
     };
   
     const ReaderModel = connection.define('Reader', schema);
     return ReaderModel;
-  };
+};

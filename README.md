@@ -2,21 +2,24 @@
 
 A book library API created using an Express.js app connected via Sequelize to a PostgreSQL database in a Docker container.
 
-## Introduction
-Following on from the music library project (XXXX), this project involves creating an Express API that stores information about readers, books, genres and authors. Users can create accounts ('readers') and list books ('books') with their genre ('genres') and author ('authors') information for them to browse books. When a book is loaned or returned by a user, the book record is to be updated by adding or removing the user's ID ('ReaderId'). 
 
+## Table of contents
+
+
+## Introduction
+Following on from the music library project (https://github.com/cocomarine/music-library), this project involves creating an Express API that stores information about readers, books, genres and authors. Users can create accounts ('readers') and list books ('books') with their genre ('genres') and author ('authors') information for browsing books. When a book is loaned or returned by a user, the book record is updated by adding or removing the user's ID ('ReaderId'). 
 
 ## Concepts covered
 
-- Interpreting user stories to plan work
+- Interpreting user stories and translating into app features
 - Creating a web server using Express
-- HTTP requests and responses
+- Handling HTTP requests and responses and errors
 - Creating API using CRUD (Create, Read, Update and Delete) operations on databases
-- Error handling 
 - Routing, middleware and controller functions
 - Database synchronisation, manipuation and validation using Sequelize, a promise-based Node.js ORM (Object-Relational Mapping) tool
 - Establishing complex relationships between database tables
-- Interacting with test and development databases in a Docker container
+- Creating test and development PostgreSQL databases in a Docker container
+- Interacting with database using node-postgres, a collection of node.js modules 
 - Use of helpers and refractoring to make code DRY
 - Using Postman to manage API requests
 - Integration testing using Mocha, Chai and SuperTest
@@ -24,19 +27,37 @@ Following on from the music library project (XXXX), this project involves creati
 - Use of Nodemon to automatically restart the node application when code changes
 
 ## Setup & getting started
-1. Start by running Postgres in a Docker containerXXXXX. 
-2. Set up the repository. 
-    - asdfasdf
-    - asdfasdfa
+1. Start by running postgres in a Docker container.
+```bash
+docker run --name postgres -p 5432:5432 -e POSTGRES_PASSWORD=password -d postgres
+```
+2. Make sure pgAdmin and Postman are installed.
+3. Run pgAdmin and add new server with the following credentials to connect to the container-run postgres. 
+    - hostname/address: localhost or the ip address of your postgres container
+    - user: postgres
+    - password: password
 
-3. Set up the application. 
-4. Set up the test environment. 
-5. Run following commands.
+4. Fork and clone the repo and initialize it running following commands:
+```bash
+git init # initializing a git repo
+npm init -y # initializing a node project creating a default package.json
+npx gitignore node # creating a .gitignore file. Make sure to add 'node_modules' afterward.
+npx eslint --init # setting up and initializing eslint to help with code formatting
+```
+5. Set up the application by installing express, pg, dotenv and nodemon. 
+```bash
+node i -S express pg # installing express and pg as dependencies
+node i -D nodemon dotenv # installing nodemon and dotenv as dev dependencies
+```
+6. Add .env and .env.test to .gitignore to prevent your credentials from commited to Github.
 
+7. To test or run the app, run the following commands.
+```bash
+npm test  # to test the codes
+npm start # to start the app at http://localhost:3000
+```
 6. Use Postman and pgAdmin to check if the CRUD operations are working.
 
-
-how to spin up the database, how did you get this running? Was it a docker container? If there are any commands needed to do this they should be listed here in a setup section
 
 ----------------
 ## API end points
@@ -48,37 +69,309 @@ how to spin up the database, how did you get this running? Was it a docker conta
 
 #### Parameters and body content
 
-> | Parameters | Body content |
-> |------------|--------------|
-> | None       | name [string], genre [string] |
+> | Parameters | Body content, required |  Optional |
+> |------------|------------------------|-----------|
+> | None       | title [string], ISBN [string], AuthorId [integer], GenreId [integer] | ReaderId [integer] |
 
 
 #### Responses
 
 > | code | description |
 > |------|-------------|
-> | `201` | successful operation
-
+> | `201` | successful operation |
+> | `400` | content element empty, null or not unique  |
+ 
 </details>
 
-### Album
-
 <details>
- <summary><code>POST</code> <code><b>/artists/{id}/albums</b></code> <code>(add a new album associated to an artist)</code></summary>
+ <summary><code>GET</code> <code><b>/books/{id}</b></code> <code>(find a book by ID)</code></summary>
 
 #### Parameters and body content
 
 > | Parameters | Body content |
 > |------------|--------------|
-> | `artistId` | name [string], year [integer] |
+> | `bookId` | None |
 
 
 #### Responses
 
 > | code | description |
 > |------|-------------|
-> | `201` | successful operation
+> | `200` | successful operation |
+> | `404` | book not found |
+ 
+</details>
 
+<details>
+ <summary><code>PATCH</code> <code><b>/books/{id}</b></code> <code>(update a book by ID)</code></summary>
+
+#### Parameters and body content
+
+> | Parameters | Body content |
+> |------------|----------------|
+> | `bookId`   | title [string], ISBN [string], AuthorId [integer], GenreId [integer] or ReaderId [integer] |
+
+
+#### Responses
+
+> | code | description |
+> |------|-------------|
+> | `200` | successful operation |
+> | `404` | book not found |
+ 
+</details>
+
+<details>
+ <summary><code>DELETE</code> <code><b>/books/{id}</b></code> <code>(delete a book by ID)</code></summary>
+
+#### Parameters and body content
+
+> | Parameters | Body content |
+> |------------|--------------|
+> | `bookId` | None |
+
+
+#### Responses
+
+> | code | description |
+> |------|-------------|
+> | `204` | successful operation |
+> | `404` | book not found |
+ 
+</details>
+
+### Reader
+
+<details>
+ <summary><code>POST</code> <code><b>/readers</b></code> <code>(add a new reader)</code></summary>
+
+#### Parameters and body content
+
+> | Parameters | Body content |
+> |------------|-----------------------------------|
+> |  None      | name [string,], email [string, email format], password [string, more than 8 characters] |
+
+
+#### Responses
+
+> | code | description |
+> |------|-------------|
+> | `201` | successful operation |
+> | `400` | content element empty, null, not unique, not right format or not right length  |
+ 
+</details>
+
+<details>
+ <summary><code>GET</code> <code><b>/readers/{id}</b></code> <code>(find a reader by ID)</code></summary>
+
+#### Parameters and body content
+
+> | Parameters | Body content |
+> |------------|--------------|
+> | `readerId` | None |
+
+
+#### Responses
+
+> | code | description |
+> |------|-------------|
+> | `200` | successful operation |
+> | `404` | reader not found |
+ 
+</details>
+
+<details>
+ <summary><code>PATCH</code> <code><b>/readers/{id}</b></code> <code>(update a reader by ID)</code></summary>
+
+#### Parameters and body content
+
+> | Parameters | Body content |
+> |------------|-----------------------------------|
+> | `readerId`  |  name [string,], email [string, email format] or password [string, more than 8 characters] |
+
+
+#### Responses
+
+> | code | description |
+> |------|-------------|
+> | `200` | successful operation |
+> | `404` | reader not found |
+ 
+</details>
+
+<details>
+ <summary><code>DELETE</code> <code><b>/readers/{id}</b></code> <code>(delete a reader by ID)</code></summary>
+
+#### Parameters and body content
+
+> | Parameters | Body content |
+> |------------|--------------|
+> | `readerId` | None |
+
+
+#### Responses
+
+> | code | description |
+> |------|-------------|
+> | `204` | successful operation |
+> | `404` | reader not found |
+ 
+</details>
+
+### Author
+
+<details>
+ <summary><code>POST</code> <code><b>/authors</b></code> <code>(add a new author)</code></summary>
+
+#### Parameters and body content
+
+> | Parameters | Body content |
+> |------------|----------------|
+> | None       | author[string] |
+
+
+#### Responses
+
+> | code | description |
+> |------|-------------|
+> | `201` | successful operation |
+> | `400` | content element empty, null or not unique  |
+ 
+</details>
+
+<details>
+ <summary><code>GET</code> <code><b>/authors/{id}</b></code> <code>(find an author by ID)</code></summary>
+
+#### Parameters and body content
+
+> | Parameters | Body content |
+> |------------|--------------|
+> | `authorId` | None |
+
+
+#### Responses
+
+> | code | description |
+> |------|-------------|
+> | `200` | successful operation |
+> | `404` | author not found |
+ 
+</details>
+
+<details>
+ <summary><code>PATCH</code> <code><b>/authors/{id}</b></code> <code>(update an author by ID)</code></summary>
+
+#### Parameters and body content
+
+> | Parameters | Body content |
+> |------------|-----------------------------------|
+> | `authorId`   | author [string] |
+
+
+#### Responses
+
+> | code | description |
+> |------|-------------|
+> | `200` | successful operation |
+> | `404` | author not found |
+ 
+</details>
+
+<details>
+ <summary><code>DELETE</code> <code><b>/authors/{id}</b></code> <code>(delete an author by ID)</code></summary>
+
+#### Parameters and body content
+
+> | Parameters | Body content |
+> |------------|--------------|
+> | `authorId` | None |
+
+
+#### Responses
+
+> | code | description |
+> |------|-------------|
+> | `204` | successful operation |
+> | `404` | author not found |
+ 
+</details>
+
+### Genre
+
+<details>
+ <summary><code>POST</code> <code><b>/genres</b></code> <code>(add a new genre)</code></summary>
+
+#### Parameters and body content
+
+> | Parameters | Body content |
+> |------------|----------------|
+> | None       | genre[string] |
+
+
+#### Responses
+
+> | code | description |
+> |------|-------------|
+> | `201` | successful operation |
+> | `400` | content element empty, null or not unique  |
+ 
+</details>
+
+<details>
+ <summary><code>GET</code> <code><b>/genres/{id}</b></code> <code>(find a genre by ID)</code></summary>
+
+#### Parameters and body content
+
+> | Parameters | Body content |
+> |------------|--------------|
+> | `genreId` | None |
+
+
+#### Responses
+
+> | code | description |
+> |------|-------------|
+> | `200` | successful operation |
+> | `404` | genre not found |
+ 
+</details>
+
+<details>
+ <summary><code>PATCH</code> <code><b>/genres/{id}</b></code> <code>(update a genre by ID)</code></summary>
+
+#### Parameters and body content
+
+> | Parameters | Body content |
+> |------------|-----------------------------------|
+> | `genreId`   | author [string] |
+
+
+#### Responses
+
+> | code | description |
+> |------|-------------|
+> | `200` | successful operation |
+> | `404` | genre not found |
+ 
+</details>
+
+<details>
+ <summary><code>DELETE</code> <code><b>/genres/{id}</b></code> <code>(delete a genre by ID)</code></summary>
+
+#### Parameters and body content
+
+> | Parameters | Body content |
+> |------------|--------------|
+> | `genreId` | None |
+
+
+#### Responses
+
+> | code | description |
+> |------|-------------|
+> | `204` | successful operation |
+> | `404` | genre not found |
+ 
 </details>
 
 ------------------
@@ -90,8 +383,13 @@ how to spin up the database, how did you get this running? Was it a docker conta
 > | column | data type |
 > |------|-------------|
 > | id | integer (PK) |
-> | name | string |
-> | genre | string |
+> | title | string |
+> | ReaderId | integer (FK)|
+> | GenreId | integer (FK)|
+> | AuthorID | integer (FK) |
+> | Reader |
+> | Genre |
+> | Author |
 
 </details>
 
@@ -102,7 +400,30 @@ how to spin up the database, how did you get this running? Was it a docker conta
 > |------|-------------|
 > | id | integer (PK) |
 > | name | string |
-> | year | integer |
-> | artistId | integer (FK) |
+> | email | string|
+> | password | string|
+> | Books |
+
+</details>
+
+<details>
+ <summary>Authors</summary>
+
+> | column | data type |
+> |------|-------------|
+> | id | integer (PK) |
+> | author | string |
+> | Books |
+
+</details>
+
+<details>
+ <summary>Genres</summary>
+
+> | column | data type |
+> |------|-------------|
+> | id | integer (PK) |
+> | genre | string |
+> | Books |
 
 </details>
