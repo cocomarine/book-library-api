@@ -42,26 +42,29 @@ docker run --name postgres -p 5432:5432 -e POSTGRES_PASSWORD=password -d postgre
     - user: postgres
     - password: password
 
-4. Fork and clone the repo and initialize it by running following commands:
-```bash
-git init # initializing a git repo
-npm init -y # initializing a node project creating a default package.json
-npx gitignore node # creating a .gitignore file. Make sure to add 'node_modules' to it.
-npx eslint --init # setting up and initializing eslint to help with code formatting
+4. Create a fork of this repo. Then clone the repo and install project dependencies.
+```bash 
+git clone git@github.com:[your-github-username]/book-library-api # to clone your copy of the repo
+npm install # to download dependencies defined in the package.json file
 ```
-5. Set up the application by installing express, pg, dotenv and nodemon. 
+5. Create a .env file in the root of your project. This contains environment variables that Dotenv loads into process.env in the create-database.js file. 
 ```bash
-node i -S express pg # installing express and pg as dependencies
-node i -D nodemon dotenv # installing nodemon and dotenv as dev dependencies
+    PGPASSWORD=password
+    PGDATABASE=book_library_dev
+    PGUSER=postgres
+    PGHOST=localhost
+    PGPORT=5433
 ```
-6. Add .env and .env.test to .gitignore to prevent your credentials from commited to Github.
+6. Also, create a .env.test file to be used for creating test database by copying the same environment variables as .env but with different database name such as 'book_library_test'.
 
-7. To test or run the app, run the following commands.
+7. Add .env and .env.test to .gitignore to prevent your credentials from commited to Github.
+
+8. To test or run the app, run the following commands.
 ```bash
 npm test  # to test the codes
 npm start # to start the app at http://localhost:3000
 ```
-6. Use Postman and pgAdmin to check if the CRUD operations are working.
+9. Use Postman and pgAdmin to check if the CRUD operations are working.
 
 
 ----------------
@@ -88,6 +91,26 @@ npm start # to start the app at http://localhost:3000
  
 </details>
 
+
+<details>
+ <summary><code>GET</code> <code><b>/books</b></code> <code>(find all the books)</code></summary>
+
+#### Parameters and body content
+
+> | Parameters | Body content |
+> |------------|--------------|
+> | None | None |
+
+
+#### Responses
+
+> | code | description |
+> |------|-------------|
+> | `200` | successful operation |
+> | `404` | books not found |
+ 
+</details>
+
 <details>
  <summary><code>GET</code> <code><b>/books/{id}</b></code> <code>(find a book by ID)</code></summary>
 
@@ -106,6 +129,7 @@ npm start # to start the app at http://localhost:3000
 > | `404` | book not found |
  
 </details>
+
 
 <details>
  <summary><code>PATCH</code> <code><b>/books/{id}</b></code> <code>(update a book by ID)</code></summary>
@@ -165,6 +189,27 @@ npm start # to start the app at http://localhost:3000
 > | `400` | content element empty, null, not unique, not right format or not right length  |
  
 </details>
+
+
+<details>
+ <summary><code>GET</code> <code><b>/readers</b></code> <code>(find all the readers)</code></summary>
+
+#### Parameters and body content
+
+> | Parameters | Body content |
+> |------------|--------------|
+> | None | None |
+
+
+#### Responses
+
+> | code | description |
+> |------|-------------|
+> | `200` | successful operation |
+> | `404` | readers not found |
+ 
+</details>
+
 
 <details>
  <summary><code>GET</code> <code><b>/readers/{id}</b></code> <code>(find a reader by ID)</code></summary>
@@ -244,6 +289,27 @@ npm start # to start the app at http://localhost:3000
  
 </details>
 
+
+<details>
+ <summary><code>GET</code> <code><b>/authors</b></code> <code>(find all the authors)</code></summary>
+
+#### Parameters and body content
+
+> | Parameters | Body content |
+> |------------|--------------|
+> | None | None |
+
+
+#### Responses
+
+> | code | description |
+> |------|-------------|
+> | `200` | successful operation |
+> | `404` | authors not found |
+ 
+</details>
+
+
 <details>
  <summary><code>GET</code> <code><b>/authors/{id}</b></code> <code>(find an author by ID)</code></summary>
 
@@ -321,6 +387,26 @@ npm start # to start the app at http://localhost:3000
 > | `400` | content element empty, null or not unique  |
  
 </details>
+
+<details>
+ <summary><code>GET</code> <code><b>/genres</b></code> <code>(find all the genres)</code></summary>
+
+#### Parameters and body content
+
+> | Parameters | Body content |
+> |------------|--------------|
+> | None | None |
+
+
+#### Responses
+
+> | code | description |
+> |------|-------------|
+> | `200` | successful operation |
+> | `404` | genres not found |
+ 
+</details>
+
 
 <details>
  <summary><code>GET</code> <code><b>/genres/{id}</b></code> <code>(find a genre by ID)</code></summary>
