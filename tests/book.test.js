@@ -102,11 +102,13 @@ describe('/books', () => {
         let testBooks;
         let testAuthors;
         let testGenres;
+        let testReaders;
 
         beforeEach(async () => {
             await Book.destroy({ where: {} });
             await Author.destroy({ where: {} });
             await Genre.destroy({ where: {} });
+            await Reader.destroy({ where: {} });
             
             testAuthors = await Promise.all([
                 Author.create({ author: 'Matt Haig' }),
@@ -136,6 +138,19 @@ describe('/books', () => {
                     ISBN: '978-0-525-52289-8',
                     AuthorId: testAuthors[0].id,
                     GenreId: testGenres[0].id
+                })
+            ]);
+
+            testReaders = await Promise.all([
+                Reader.create({
+                    name: "Amelia Dolan",
+                    email: "miadolan@hotmail.com",
+                    password: "PASSWORD123",
+                }), 
+                Reader.create({
+                    name: "Arya Stark",
+                    email: "vmorgul@me.com",
+                    password: "ABCDEFGHI",
                 })
             ]);
         });
@@ -202,6 +217,9 @@ describe('/books', () => {
                 expect(response.body.Author.id).to.equal(book.AuthorId);
                 expect(response.body.Genre.id).to.equal(book.GenreId);
                 expect(response.body.ISBN).to.equal(book.ISBN);
+                expect(response.body.Author.author).to.equal(testAuthors[0].author);
+                expect(response.body.Genre.genre).to.equal(testGenres[0].genre);
+
             });
 
             it('returns a 404 if the book does not exist', async () => {
@@ -235,6 +253,21 @@ describe('/books', () => {
 
                 expect(response.status).to.equal(200);
                 expect(updatedBookRecord.GenreId).to.equal(testGenres[1].id);
+            });
+
+            it('updates book record to show the reader loaning the book', async () => {
+                const book = testBooks[0];
+                const response = await request(app)
+                    .patch(`/books/${book.id}`)
+                    .send({ ReaderId: testReaders[0].id });
+                
+                const updatedBookRecord = await Book.findByPk(book.id, { include: Reader });
+                
+                expect(response.status).to.equal(200);
+                expect(updatedBookRecord.ReaderId).to.equal(testReaders[0].id);
+                expect(updatedBookRecord.Reader.name).to.equal(testReaders[0].name);
+                expect(updatedBookRecord.Reader.email).to.equal(testReaders[0].email);
+                expect(updatedBookRecord.Reader.password).to.equal(testReaders[0].password);
             });
 
             it('returns a 404 if the book does not exist', async () => {

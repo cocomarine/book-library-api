@@ -25,8 +25,8 @@ describe('/authors', () => {
                     .send(testAuthor);
                 
                 const newAuthorRecord = await Author.findByPk(response.body.id, { raw: true });
-                expect(newAuthorRecord.author).to.equal('Matt Haig');
 
+                expect(newAuthorRecord.author).to.equal('Matt Haig');
                 expect(response.body.author).to.equal('Matt Haig');
                 expect(response.status).to.equal(201);
             });
@@ -84,7 +84,6 @@ describe('/authors', () => {
 
                 expect(response.status).to.equal(201);
                 expect(response.body.author).to.equal('Frank Herbert');
-
                 expect(newAuthorRecord.author).to.equal('Frank Herbert');
             });
 
