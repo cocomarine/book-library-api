@@ -116,8 +116,8 @@ describe('/books', () => {
             ]);
             
             testGenres = await Promise.all([
-                Genre.create({ genre: 'Contemporary Fiction '}),
-                Genre.create({ genre: 'Crime and Mystery '})
+                Genre.create({ genre: 'Contemporary Fiction' }),
+                Genre.create({ genre: 'Crime and Mystery' })
             ]);
 
             testBooks = await Promise.all([

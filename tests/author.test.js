@@ -1,6 +1,6 @@
 const { expect } = require('chai');
 const request = require('supertest');
-const { Author } = require('../src/models');
+const { Author, Book, Genre } = require('../src/models');
 const { errorNull, errorEmpty, errorNotUnique, errorNotPresent } = require('./helpers');
 const app = require('../src/app');
 
@@ -55,19 +55,43 @@ describe('/authors', () => {
 
     describe('with records in the database', () => {
         let testAuthors;
+        let testBooks;
+        let testGenres;
 
         beforeEach(async () => {
             await Author.destroy({ where: {} });
+            await Book.destroy({ where: {} });
+            await Genre.destroy({ where: {} });
 
             testAuthors = await Promise.all([
-                Author.create({
-                    author: 'Matt Haig'
+                Author.create({ author: 'Matt Haig' }),
+                Author.create({ author: 'Kate Ellis' }),
+                Author.create({ author: 'Haruki Murakami' })
+            ]);
+
+            testGenres = await Promise.all([
+                Genre.create({ genre: 'Contemporary Fiction' }),
+                Genre.create({ genre: 'Crime and Mystery' })
+            ]);
+
+            testBooks = await Promise.all([
+                Book.create({
+                    title: 'The Midnight Library',
+                    ISBN: '978-0-525-55948-1',
+                    AuthorId: testAuthors[0].id,
+                    GenreId: testGenres[0].id
                 }),
-                Author.create({
-                    author: 'Kate Ellis',
+                Book.create({
+                    title: 'The Stone Chamber',
+                    ISBN: '978-0-349-42571-9',
+                    AuthorId: testAuthors[1].id,
+                    GenreId: testGenres[1].id
                 }),
-                Author.create({
-                    author: 'Haruki Murakami',
+                Book.create({
+                    title: 'How To Stop Time',
+                    ISBN: '978-0-525-52289-8',
+                    AuthorId: testAuthors[0].id,
+                    GenreId: testGenres[0].id
                 })
             ]);
         });
@@ -115,16 +139,18 @@ describe('/authors', () => {
 
         describe('GET /authors/:id', () => {
             it('gets authors record by id', async () => {
-                const author = testAuthors[0];
+                const author = testAuthors[1];
                 const response = await request(app).get(`/authors/${author.id}`);
         
                 expect(response.status).to.equal(200);
                 expect(response.body.author).to.equal(author.author);
+                expect(response.body.Books[0].id).to.equal(testBooks[1].id);
+                expect(response.body.Books[0].title).to.equal(testBooks[1].title);
+                expect(response.body.Books[0].ISBN).to.equal(testBooks[1].ISBN);
             });
 
             it('returns a 404 if the Author does not exist', async () => {
                 const response = await request(app).get('/authors/12345');
-                
                 expect(response.status).to.equal(404);
                 expect(response.body.error).to.equal(errorNotPresent('author'));
             });
