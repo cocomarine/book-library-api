@@ -27,10 +27,9 @@ const removePswd = (obj) => {
     return obj;
   };
 
-const createEntry = async (res, model, entry) => {
-    const Model = getModel(model);
-    
+const createEntry = async (res, model, entry) => {    
     try {
+        const Model = getModel(model);
         const newEntry = await Model.create(entry);
         const entryWithoutPswd = removePswd(newEntry.get());
 
@@ -42,27 +41,31 @@ const createEntry = async (res, model, entry) => {
 };
 
 const getAllEntry = async (res, model) => {
-    const Model = getModel(model);
-    const entries = await Model.findAll(getOptions(model));
-
-    if (model === 'book') {
-        entries.forEach((entry) => {
-            if (entry.Reader) {
-                removePswd(entry.Reader.get());
-            }
-        });
-    };
-
-    const entryWithoutPswd = entries.map(entry => removePswd(entry.get()));
-
-    res.status(200).json(entryWithoutPswd);
+    try {
+        const Model = getModel(model);
+        const entries = await Model.findAll(getOptions(model));
+    
+        if (model === 'book') {
+            entries.forEach((entry) => {
+                if (entry.Reader) {
+                    removePswd(entry.Reader.get());
+                }
+            });
+        };
+    
+        const entryWithoutPswd = entries.map(entry => removePswd(entry.get()));
+    
+        res.status(200).json(entryWithoutPswd);
+    } catch (err) {
+        res.status(500).json(err.message);
+    }
 };
 
 const getEntryById = async (res, model, id) => {
-    const Model = getModel(model);
-    const entry = await Model.findByPk(id, getOptions(model));
-
     try {
+        const Model = getModel(model);
+        const entry = await Model.findByPk(id, getOptions(model));
+
         if (!entry) res.status(404).json(getError404(model));
     
         if (model === 'book' && entry.Reader) removePswd(entry.Reader.get());
@@ -76,10 +79,10 @@ const getEntryById = async (res, model, id) => {
 };
 
 const updateEntryById = async (res, model, entry, id) => {
+    try {
         const Model = getModel(model);
         const [ entryUpdated ] = await Model.update(entry, { where: { id } });
 
-    try {
         if (!entryUpdated) res.status(404).json(getError404(model));
 
         const updatedEntry = await Model.findByPk(id);
@@ -92,10 +95,10 @@ const updateEntryById = async (res, model, entry, id) => {
 };
 
 const deleteEntryById = async (res, model, id) => {
+    try {
         const Model = getModel(model);
         const deletedEntry = await Model.destroy({ where: { id } });
 
-    try {
         if (!deletedEntry) res.status(404).json(getError404(model));
 
         res.status(204).json(deletedEntry);
