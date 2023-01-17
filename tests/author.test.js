@@ -14,9 +14,7 @@ describe('/authors', () => {
 
             beforeEach(async () => {
                 await Author.destroy({ where: {} });   
-                testAuthor = {
-                    author: 'Matt Haig',
-                };
+                testAuthor = { author: 'Matt Haig' };
             });
 
             it('creates a new author in the database', async () => {
@@ -138,7 +136,7 @@ describe('/authors', () => {
         });
 
         describe('GET /authors/:id', () => {
-            it('gets authors record by id', async () => {
+            it('gets authors record by id with associated book information', async () => {
                 const author = testAuthors[1];
                 const response = await request(app).get(`/authors/${author.id}`);
         
@@ -162,12 +160,12 @@ describe('/authors', () => {
                 const response = await request(app)
                     .patch(`/authors/${author.id}`)
                     .send({ author: 'some other name' });
-                const updateAuthorRecord = await Author.findByPk(author.id, {
+                const updatedAuthorRecord = await Author.findByPk(author.id, {
                     raw: true,
                 });
 
                 expect(response.status).to.equal(200);
-                expect(updateAuthorRecord.author).to.equal('some other name')
+                expect(updatedAuthorRecord.author).to.equal('some other name')
             });
 
             it('returns a 404 if the author does not exist', async () => {

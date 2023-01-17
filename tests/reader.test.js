@@ -69,7 +69,7 @@ describe('/readers', () => {
                 expect(response.body.error).to.equal("email is in incorrect format");
             });
 
-            it('returns erorr when password has 8 or shorter characters', async () => {
+            it('returns error when password has 8 or shorter characters', async () => {
                 testReader.password = 'abcd';
                 const response = await request(app)
                     .post('/readers')

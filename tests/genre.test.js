@@ -14,9 +14,7 @@ describe('/genres', () => {
 
             beforeEach(async () => {
                 await Genre.destroy({ where: {} });
-                testGenre = {
-                    genre: 'Science Fiction',
-                };
+                testGenre = { genre: 'Science Fiction' };
             });
 
             it('creates a new genre in the database', async () => {
@@ -27,7 +25,6 @@ describe('/genres', () => {
                 const newGenreRecord = await Genre.findByPk(response.body.id, { raw: true });
 
                 expect(newGenreRecord.genre).to.equal('Science Fiction');
-
                 expect(response.body.genre).to.equal('Science Fiction');
                 expect(response.status).to.equal(201);
             });
@@ -55,20 +52,44 @@ describe('/genres', () => {
     });
 
     describe('with records in the database', () => {
+        let testAuthors;
+        let testBooks;
         let testGenres;
 
         beforeEach(async () => {
+            await Author.destroy({ where: {} });
+            await Book.destroy({ where: {} });
             await Genre.destroy({ where: {} });
 
+            testAuthors = await Promise.all([
+                Author.create({ author: 'Matt Haig' }),
+                Author.create({ author: 'Kate Ellis' }),
+                Author.create({ author: 'Haruki Murakami' })
+            ]);
+
             testGenres = await Promise.all([
-                Genre.create({
-                    genre: 'Contemporary Fiction',
+                Genre.create({ genre: 'Contemporary Fiction' }),
+                Genre.create({ genre: 'Crime and Mystery' })
+            ]);
+
+            testBooks = await Promise.all([
+                Book.create({
+                    title: 'The Midnight Library',
+                    ISBN: '978-0-525-55948-1',
+                    AuthorId: testAuthors[0].id,
+                    GenreId: testGenres[0].id
                 }),
-                Genre.create({
-                    genre: 'Crime and Mistery',
+                Book.create({
+                    title: 'The Stone Chamber',
+                    ISBN: '978-0-349-42571-9',
+                    AuthorId: testAuthors[1].id,
+                    GenreId: testGenres[1].id
                 }),
-                Genre.create({
-                    genre: 'Memoir',
+                Book.create({
+                    title: 'How To Stop Time',
+                    ISBN: '978-0-525-52289-8',
+                    AuthorId: testAuthors[0].id,
+                    GenreId: testGenres[0].id
                 })
             ]);
         });
@@ -85,7 +106,6 @@ describe('/genres', () => {
 
                 expect(response.body.genre).to.equal('Science Fiction');
                 expect(response.status).to.equal(201);
-
                 expect(newGenreRecord.genre).to.equal('Science Fiction');
             });
 
@@ -106,23 +126,25 @@ describe('/genres', () => {
                 const response = await request(app).get('/genres');
 
                 expect(response.status).to.equal(200);
-                expect(response.body.length).to.equal(3);
+                expect(response.body.length).to.equal(2);
 
                 response.body.forEach((genre) => {
                     const expected = testGenres.find((a) => a.id === genre.id);
-                     
                     expect(genre.genre).to.equal(expected.genre);
                 });
             });
         });
 
         describe('GET /genres/:id', () => {
-            it('gets genres record by id', async () => {
-                const genre = testGenres[0];
+            it('gets genres record by id with associated book information', async () => {
+                const genre = testGenres[1];
                 const response = await request(app).get(`/genres/${genre.id}`);
         
                 expect(response.status).to.equal(200);
                 expect(response.body.genre).to.equal(genre.genre);
+                expect(response.body.Books[0].id).to.equal(testBooks[1].id);
+                expect(response.body.Books[0].title).to.equal(testBooks[1].title);
+                expect(response.body.Books[0].ISBN).to.equal(testBooks[1].ISBN);
             });
 
             it('returns a 404 if the genre does not exist', async () => {
@@ -139,13 +161,12 @@ describe('/genres', () => {
                 const response = await request(app)
                     .patch(`/genres/${genre.id}`)
                     .send({ genre: 'some other name' });
-
-                const updateGenreRecord = await Genre.findByPk(genre.id, {
+                 const updatedGenreRecord = await Genre.findByPk(genre.id, {
                     raw: true,
                 });
 
                 expect(response.status).to.equal(200);
-                expect(updateGenreRecord.genre).to.equal('some other name')
+                expect(updatedGenreRecord.genre).to.equal('some other name')
             });
 
             it('returns a 404 if the genre does not exist', async () => {
