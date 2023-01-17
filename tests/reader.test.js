@@ -82,12 +82,21 @@ describe('/readers', () => {
     });
 
     describe('with records in the database', () => {
-        let readers;
+        let testAuthor;
+        let testGenre;
+        let testBook;
+        let testReaders;
 
         beforeEach(async () => {
+            await Author.destroy({ where: {} });
+            await Genre.destroy({ where: {} });
+            await Book.destroy({ where: {} });
             await Reader.destroy({ where: {} });
 
-            readers = await Promise.all([
+            testAuthor = await Author.create({ author: 'Matt Haig '});
+            testGenre = await Genre.create({ genre: 'Contemporary Fiction '});
+
+            testReaders = await Promise.all([
                 Reader.create({
                     name: 'Elizabeth Bennet',
                     email: 'future_ms_darcy@gmail.com',
@@ -97,13 +106,16 @@ describe('/readers', () => {
                     name: 'Arya Stark', 
                     email: 'vmorgul@me.com',
                     password: 'ABCDEFGHI',
-                }),
-                Reader.create({
-                    name:'Lyra Belacqua', 
-                    email: 'darknorth123@msn.org',
-                    password: 'LLLLBBBBC',
                 })
             ]);
+
+            testBook = await Book.create({
+                title: 'The Midnight Library',
+                ISBN: '978-0-525-55948-1',
+                ReaderId: testReaders[0].id,
+                AuthorId: testAuthor.id,
+                GenreId: testGenre.id
+            });
         });
 
         describe('POST /readers', () => {
@@ -147,10 +159,10 @@ describe('/readers', () => {
                 const response = await request(app).get('/readers');
 
                 expect(response.status).to.equal(200);
-                expect(response.body.length).to.equal(3);
+                expect(response.body.length).to.equal(2);
 
                 response.body.forEach((reader) => {
-                    const expected = readers.find((a) => a.id === reader.id);
+                    const expected = testReaders.find((a) => a.id === reader.id);
                      
                     expect(reader.name).to.equal(expected.name);
                     expect(reader.email).to.equal(expected.email);
@@ -160,14 +172,21 @@ describe('/readers', () => {
         });
 
         describe('GET /readers/:id', () => {
-            it('gets readers record by id', async () => {
-                const reader = readers[0];
+            it('gets readers record by id and associated book information', async () => {
+                const reader = testReaders[0];
                 const response = await request(app).get(`/readers/${reader.id}`);
         
                 expect(response.status).to.equal(200);
                 expect(response.body.name).to.equal(reader.name);
                 expect(response.body.email).to.equal(reader.email);
                 expect(response.body.password).to.equal(undefined);
+
+                expect(response.body.Books[0].id).to.equal(testBook.id);
+                expect(response.body.Books[0].title).to.equal(testBook.title);
+                expect(response.body.Books[0].ISBN).to.equal(testBook.ISBN);
+                expect(response.body.Books[0].ReaderId).to.equal(testBook.ReaderId);
+                expect(response.body.Books[0].AuthorId).to.equal(testBook.AuthorId);
+                expect(response.body.Books[0].GenreId).to.equal(testBook.GenreId);
             });
 
             it('returns a 404 if the reader does not exist', async () => {
@@ -180,16 +199,16 @@ describe('/readers', () => {
 
         describe('PATCH /readers/:id', () => {
             it('updates readers email by id', async () => {
-                const reader = readers[0];
+                const reader = testReaders[0];
                 const response = await request(app)
                     .patch(`/readers/${reader.id}`)
                     .send({ email: 'miss_e_bennet@gmail.com' });
-                const updateReaderRecord = await Reader.findByPk(reader.id, {
+                const updatedReaderRecord = await Reader.findByPk(reader.id, {
                     raw: true,
                 });
 
                 expect(response.status).to.equal(200);
-                expect(updateReaderRecord.email).to.equal('miss_e_bennet@gmail.com')
+                expect(updatedReaderRecord.email).to.equal('miss_e_bennet@gmail.com')
             });
 
             it('returns a 404 if the reader does not exist', async () => {
@@ -204,7 +223,7 @@ describe('/readers', () => {
 
         describe('DELETE /readers/:id', () => {
             it('deletes reader record by id', async () => {
-                const reader = readers[0];
+                const reader = testReaders[0];
                 const response = await request(app).delete(`/readers/${reader.id}`);
                 const deletedReader = await Reader.findByPk(reader.id, { raw: true });
 

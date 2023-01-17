@@ -208,7 +208,7 @@ describe('/books', () => {
         });
 
         describe('GET /books/:id', () => {
-            it('gets books record by id', async () => {
+            it('gets books record by id with associated genre and author information', async () => {
                 const book = testBooks[0];
                 const response = await request(app).get(`/books/${book.id}`);
 
