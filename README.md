@@ -518,3 +518,9 @@ npm start # to start the app at http://localhost:3000
 > | Books |
 
 </details>
+
+## Author
+
+👤 **HJ Kang** 
+- GitHub [@cocomarine](https://github.com/cocomarine) 
+- LinkedIn [@hj-kang07](https://www.linkedin.com/in/hj-kang07/) 
