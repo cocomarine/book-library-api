@@ -519,6 +519,8 @@ npm start # to start the app at http://localhost:3000
 
 </details>
 
+------------------
+
 ## Author
 
 👤 **HJ Kang** 
