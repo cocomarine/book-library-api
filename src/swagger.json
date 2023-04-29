@@ -1,0 +1,357 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Book Library API",
+    "description": "An Express API that stores information about readers, books, genres and authors",
+    "version": "1.0"
+  },
+  "host": "localhost:4000",
+  "paths": {
+    "/readers": {
+      "get": {
+        "tags": ["readers"],
+        "description": "Get all readers from system",
+        "summary": "Get all readers",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Reader"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["readers"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "reader object that needs to be added to the database",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Reader"
+            }
+          }
+        ],
+        "description": "Create new reader in system",
+        "summary": "Post new reader",       
+        "produces": ["application/json"],
+        "responses": {
+          "201": {
+            "description": "New reader is created",
+            "schema": {
+              "$ref": "#/definitions/Reader"
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/readers/{readerId}": {
+      "get": {
+        "tags": ["readers"],
+        "description": "Return a single reader",
+        "summary": "Find reader by ID",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "readerId",
+            "type": "integer",
+            "description": "ID of reader object to be retrieved",
+            "required": true,
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Reader"
+            }
+          },
+          "404": {
+            "description": "reader does not exist"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "patch": {
+        "tags": ["readers"],
+        "description": "Update an reader data by patch request",
+        "summary": "Update reader data by ID",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "readerId",
+            "type": "integer",
+            "description": "reader object that needs to be updated",
+            "required": true
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Updated reader object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ReaderPatch"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Reader"
+            }
+          },
+          "404": {
+            "description": "reader does not exist"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["readers"],
+        "description": "Delete a single reader",
+        "summary": "Delete reader by ID",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "readerId",
+            "type": "integer",
+            "description": "reader object to delete from database",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Reader"
+            }
+          },
+          "404": {
+            "description": "reader does not exist"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/books": {
+      "get": {
+        "tags": ["books"],
+        "description": "Get all books from system",
+        "summary": "Get all books",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Book"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["books"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "book object that needs to be added to the database",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Book"
+            }
+          }
+        ],
+        "description": "Create new book in system",
+        "summary": "Post new book",       
+        "produces": ["application/json"],
+        "responses": {
+          "201": {
+            "description": "New book is created",
+            "schema": {
+              "$ref": "#/definitions/Book"
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/books/{bookId}": {
+      "get": {
+        "tags": ["books"],
+        "description": "Return a single book",
+        "summary": "Find book by ID",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "bookId",
+            "type": "integer",
+            "description": "ID of book object to be retrieved",
+            "required": true,
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Book"
+            }
+          },
+          "404": {
+            "description": "book does not exist"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "patch": {
+        "tags": ["books"],
+        "description": "Update an book data by patch request",
+        "summary": "Update book data by ID",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "bookId",
+            "type": "integer",
+            "description": "book object that needs to be updated",
+            "required": true
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Updated book object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/BookPatch"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Book"
+            }
+          },
+          "404": {
+            "description": "book does not exist"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["books"],
+        "description": "Delete a single book",
+        "summary": "Delete book by ID",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "bookId",
+            "type": "integer",
+            "description": "book object to delete from database",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Book"
+            }
+          },
+          "404": {
+            "description": "book does not exist"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Reader": {
+      "type": "object",
+      "required": ["name", "email", "password"],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "description": "reader ID",
+          "readOnly": true
+        },
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "ReaderPatch": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "Book": {
+      "type": "object",
+      "required": ["title", "ISBN"],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "description": "reader ID",
+          "readOnly": true
+        },
+        "title": {
+          "type": "string"
+        },
+        "ISBN": {
+          "type": "string"
+        }
+      }
+    },
+    "BookPatch": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "ISBN": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}
