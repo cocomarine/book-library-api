@@ -30,6 +30,7 @@ Following on from the music library project (https://github.com/cocomarine/music
 - Integration testing using Mocha, Chai and SuperTest
 - Use of Dotenv to store sensitive information
 - Use of Nodemon to automatically restart the node application when code changes
+- Use of Swagger to generate API documentation
 
 ## Setup & getting started
 1. Start by running postgres in a Docker container.
@@ -62,10 +63,12 @@ npm install # to download dependencies defined in the package.json file
 8. To test or run the app, run the following commands.
 ```bash
 npm test  # to test the codes
-npm start # to start the app at http://localhost:3000
+npm start # to start the app at http://localhost:4000
 ```
 9. Use Postman and pgAdmin to check if the CRUD operations are working.
+You can also access API documentation at http://localhost:4000/api-docs .
 
+<img src="images/BookLibrary_apidocs_1.png" width="30%" alt="Screenshot of Swagger API doc of Book Library" title="Swagger API doc">
 
 ----------------
 ## API end points
