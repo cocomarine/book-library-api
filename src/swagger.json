@@ -284,6 +284,284 @@
           }
         }
       }
+    },
+    "/authors": {
+      "get": {
+        "tags": ["authors"],
+        "description": "Get all authors from system",
+        "summary": "Get all authors",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Author"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["authors"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "author object that needs to be added to the database",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Author"
+            }
+          }
+        ],
+        "description": "Create new author in system",
+        "summary": "Post new Author",       
+        "produces": ["application/json"],
+        "responses": {
+          "201": {
+            "description": "New author is created",
+            "schema": {
+              "$ref": "#/definitions/Author"
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/authors/{authorId}": {
+      "get": {
+        "tags": ["authors"],
+        "description": "Return a single Author",
+        "summary": "Find author by ID",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "authorId",
+            "type": "integer",
+            "description": "ID of author object to be retrieved",
+            "required": true,
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Author"
+            }
+          },
+          "404": {
+            "description": "author does not exist"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "patch": {
+        "tags": ["authors"],
+        "description": "Update an author data by patch request",
+        "summary": "Update author data by ID",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "authorId",
+            "type": "integer",
+            "description": "author object that needs to be updated",
+            "required": true
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Updated author object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/authorPatch"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Author"
+            }
+          },
+          "404": {
+            "description": "author does not exist"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["authors"],
+        "description": "Delete a single Author",
+        "summary": "Delete author by ID",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "authorId",
+            "type": "integer",
+            "description": "author object to delete from database",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Author"
+            }
+          },
+          "404": {
+            "description": "author does not exist"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/genres": {
+      "get": {
+        "tags": ["genres"],
+        "description": "Get all genres from system",
+        "summary": "Get all genres",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Genre"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["genres"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "genre object that needs to be added to the database",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Genre"
+            }
+          }
+        ],
+        "description": "Create new genre in system",
+        "summary": "Post new genre",       
+        "produces": ["application/json"],
+        "responses": {
+          "201": {
+            "description": "New genre is created",
+            "schema": {
+              "$ref": "#/definitions/Genre"
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/genres/{genreId}": {
+      "get": {
+        "tags": ["genres"],
+        "description": "Return a single genre",
+        "summary": "Find genre by ID",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "genreId",
+            "type": "integer",
+            "description": "ID of genre object to be retrieved",
+            "required": true,
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Genre"
+            }
+          },
+          "404": {
+            "description": "genre does not exist"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "patch": {
+        "tags": ["genres"],
+        "description": "Update an genre data by patch request",
+        "summary": "Update genre data by ID",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "genreId",
+            "type": "integer",
+            "description": "genre object that needs to be updated",
+            "required": true
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Updated genre object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GenrePatch"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Genre"
+            }
+          },
+          "404": {
+            "description": "genre does not exist"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["genres"],
+        "description": "Delete a single genre",
+        "summary": "Delete genre by ID",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "genreId",
+            "type": "integer",
+            "description": "genre object to delete from database",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Genre"
+            }
+          },
+          "404": {
+            "description": "genre does not exist"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -348,6 +626,54 @@
           "type": "string"
         },
         "ISBN": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "Author": {
+      "type": "object",
+      "required": ["author"],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "description": "reader ID",
+          "readOnly": true
+        },
+        "author": {
+          "type": "string"
+        }
+      }
+    },
+    "AuthorPatch": {
+      "type": "object",
+      "properties": {
+        "author": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "Genre": {
+      "type": "object",
+      "required": ["genre"],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "description": "reader ID",
+          "readOnly": true
+        },
+        "genre": {
+          "type": "string"
+        }
+      }
+    },
+    "GenrePatch": {
+      "type": "object",
+      "properties": {
+        "genre": {
           "type": "string"
         }
       },

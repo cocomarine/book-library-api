@@ -35,7 +35,7 @@ app.use('/genres', genreRouter);
 app.use(
   '/api-docs', 
   swaggerUi.serve, 
-  swaggerUi.setup(swaggerDocument, { explorer: true })
+  swaggerUi.setup(swaggerDocument)
 );
 
 module.exports = app;
